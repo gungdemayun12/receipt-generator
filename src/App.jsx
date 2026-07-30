@@ -83,6 +83,8 @@ function App() {
     showThankYou: true,
     showLogo: false,
     logoText: '',
+    logoWidth: 120,
+    logoHeight: 120,
     borderStyle: 'equals', // equals, dashes, stars
   })
 
@@ -100,8 +102,10 @@ function App() {
   const [notif, setNotif] = useState(null)
   const [showReset, setShowReset] = useState(false)
   const [receiptList, setReceiptList] = useState([])
+  const [logoImage, setLogoImage] = useState('')
 
   const barcodeRef = useRef(null)
+  const logoInputRef = useRef(null)
   const nextId = useRef(2)
 
   const msg = useCallback((text, type = 'success') => {
@@ -143,6 +147,32 @@ function App() {
       case 'stars': return '*'
       default: return '='
     }
+  }
+
+  // Handle logo image upload
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      msg('File harus berupa gambar!', 'error')
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      msg('Ukuran gambar maksimal 2MB!', 'error')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      setLogoImage(ev.target.result)
+      msg('Logo berhasil diupload')
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
+
+  const removeLogo = () => {
+    setLogoImage('')
+    msg('Logo dihapus')
   }
 
   const addItem = () => {
@@ -262,7 +292,9 @@ function App() {
 
     // Header Toko
     h += `<div style="text-align:${settings.align};text-transform:uppercase;">`
-    if (settings.showLogo && settings.logoText) {
+    if (settings.showLogo && logoImage) {
+      h += `<div style="text-align:center;margin-bottom:6px;"><img src="${logoImage}" style="width:${settings.logoWidth}px;height:${settings.logoHeight}px;object-fit:contain;" /></div>`
+    } else if (settings.showLogo && settings.logoText) {
       h += `<div style="font-size:${fs*2.5}px;font-weight:bold;letter-spacing:3px;margin-bottom:4px;">${settings.logoText}</div>`
     }
     h += `<div style="font-size:${fs*2}px;font-weight:bold;letter-spacing:2px;">${header.storeName}</div>`
@@ -716,7 +748,10 @@ function App() {
               }}>
                 {/* HEADER TOKO */}
                 <div className="s-header" style={{ textAlign: settings.align }}>
-                  {settings.showLogo && settings.logoText && (
+                  {settings.showLogo && logoImage && (
+                    <img src={logoImage} alt="Logo" className="s-logo-img" style={{ width: settings.logoWidth + 'px', height: settings.logoHeight + 'px' }} />
+                  )}
+                  {settings.showLogo && !logoImage && settings.logoText && (
                     <div className="s-logo">{settings.logoText}</div>
                   )}
                   <div className="s-namatoko">{header.storeName || 'TOKO ANDA'}</div>
@@ -952,14 +987,46 @@ function App() {
                   <label className="cb">
                     <input type="checkbox" checked={settings.showLogo} onChange={e => setSettings({...settings, showLogo: e.target.checked})} />
                     <span className="cb-box"></span>
-                    Tampilkan Logo Teks
+                    Tampilkan Logo Gambar
                   </label>
+                  <span className="hint">Upload gambar logo (max 2MB, format PNG/JPG)</span>
                 </div>
                 {settings.showLogo && (
-                  <div className="fg">
-                    <label>Teks Logo</label>
-                    <input value={settings.logoText} onChange={e => setSettings({...settings, logoText: e.target.value})} placeholder="Contoh: TOKO ANDA" />
-                  </div>
+                  <>
+                    <div className="fg full logo-upload-section">
+                      <label>Upload Logo</label>
+                      <div className="logo-upload-row">
+                        <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} hidden />
+                        <button className="btn-sec" onClick={() => logoInputRef.current?.click()}>
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                          Pilih Gambar
+                        </button>
+                        {logoImage && (
+                          <button className="btn-dgr" onClick={removeLogo}>
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Hapus
+                          </button>
+                        )}
+                      </div>
+                      {logoImage && (
+                        <div className="logo-preview-box">
+                          <img src={logoImage} alt="Logo" className="logo-preview-img" />
+                          <span className="hint">Logo akan tampil di atas nama toko</span>
+                        </div>
+                      )}
+                      {!logoImage && (
+                        <span className="hint">Belum ada logo. Klik "Pilih Gambar" untuk upload.</span>
+                      )}
+                    </div>
+                    <div className="fg">
+                      <label>Ukuran Logo (px)</label>
+                      <div className="input-grp">
+                        <input type="number" min="30" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: Math.max(30, Math.min(300, Number(e.target.value)))})} placeholder="Lebar" />
+                        <span className="input-sep">×</span>
+                        <input type="number" min="30" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: Math.max(30, Math.min(300, Number(e.target.value)))})} placeholder="Tinggi" />
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             </div>

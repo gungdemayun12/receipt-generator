@@ -626,6 +626,59 @@ main {
   margin-top: -2px;
 }
 
+/* Logo Upload */
+.logo-upload-section {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  background: rgba(108, 92, 231, 0.03);
+}
+
+.logo-upload-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.logo-preview-box {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.logo-preview-img {
+  max-width: 150px;
+  max-height: 150px;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 4px;
+  background: white;
+}
+
+.input-sep {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: none;
+  border-right: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.s-logo-img {
+  display: block;
+  margin: 0 auto 8px;
+  object-fit: contain;
+  max-width: 100%;
+}
+
 /* Data actions */
 .data-act {
   display: flex;
