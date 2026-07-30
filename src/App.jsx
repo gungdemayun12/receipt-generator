@@ -155,6 +155,47 @@ function App() {
     }
   }
 
+  const getLogoWrapperStyle = () => {
+    const lw = settings.logoWidth
+    const lh = settings.logoHeight
+    let w = lw
+    let h = lh
+
+    if (settings.logoShape === 'circle') {
+      const size = Math.max(20, Math.min(lw, lh))
+      w = size
+      h = size
+    }
+
+    const borderRadius = getLogoBorderRadius()
+    const border = settings.logoBorderWidth > 0 ? `${settings.logoBorderWidth}px ${settings.logoBorderStyle} ${settings.logoBorderColor}` : 'none'
+    const bg = settings.logoBgColor === 'transparent' ? 'transparent' : settings.logoBgColor
+
+    return {
+      width: w + 'px',
+      height: h + 'px',
+      borderRadius,
+      border,
+      backgroundColor: bg,
+      overflow: 'hidden',
+      display: 'inline-block',
+      lineHeight: 0,
+      padding: '2px',
+      boxSizing: 'border-box',
+    }
+  }
+
+  const getLogoImgStyle = () => {
+    const objectFit = settings.logoShape === 'circle' ? 'cover' : 'contain'
+
+    return {
+      width: '100%',
+      height: '100%',
+      objectFit,
+      display: 'block',
+    }
+  }
+
   const getBorderChar = () => {
     switch(settings.borderStyle) {
       case 'dashes': return '-'
@@ -309,7 +350,7 @@ function App() {
     // Header Toko
     h += `<div style="text-align:${settings.align};text-transform:uppercase;">`
     if (settings.showLogo && logoImage) {
-      h += `<div style="text-align:center;margin-bottom:6px;"><img src="${logoImage}" style="width:${settings.logoWidth}px;height:${settings.logoHeight}px;object-fit:contain;border-radius:${getLogoBorderRadius()};border:${settings.logoBorderWidth > 0 ? settings.logoBorderWidth + 'px ' + settings.logoBorderStyle + ' ' + settings.logoBorderColor : 'none'};background-color:${settings.logoBgColor};padding:2px;" /></div>`
+      h += `<div style="text-align:center;margin-bottom:6px;"><div style="width:${settings.logoShape === 'circle' ? Math.max(20, Math.min(settings.logoWidth, settings.logoHeight)) : settings.logoWidth}px;height:${settings.logoShape === 'circle' ? Math.max(20, Math.min(settings.logoWidth, settings.logoHeight)) : settings.logoHeight}px;border-radius:${getLogoBorderRadius()};border:${settings.logoBorderWidth > 0 ? settings.logoBorderWidth + 'px ' + settings.logoBorderStyle + ' ' + settings.logoBorderColor : 'none'};background-color:${settings.logoBgColor};overflow:hidden;display:inline-block;line-height:0;padding:2px;box-sizing:border-box;"><img src="${logoImage}" style="width:100%;height:100%;object-fit:${settings.logoShape === 'circle' ? 'cover' : 'contain'};display:block;" /></div></div>`
     } else if (settings.showLogo && settings.logoText) {
       h += `<div style="font-size:${fs*2.5}px;font-weight:bold;letter-spacing:3px;margin-bottom:4px;">${settings.logoText}</div>`
     }
@@ -660,8 +701,10 @@ function App() {
                   </div>
                   {logoImage && (
                     <div className="logo-preview-box" style={{ flexDirection: 'row', alignItems: 'center', gap: '16px', marginTop: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', background: 'var(--bg)', borderRadius: 'var(--radius-sm)' }}>
-                        <img src={logoImage} alt="Logo" style={{ width: settings.logoWidth + 'px', height: settings.logoHeight + 'px', objectFit: 'contain', borderRadius: getLogoBorderRadius(), border: settings.logoBorderWidth > 0 ? `${settings.logoBorderWidth}px ${settings.logoBorderStyle} ${settings.logoBorderColor}` : 'none', backgroundColor: settings.logoBgColor, padding: '2px' }} />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', borderRadius: 'var(--radius-sm)', padding: '12px' }}>
+                        <div style={getLogoWrapperStyle()}>
+                          <img src={logoImage} alt="Logo" style={getLogoImgStyle()} />
+                        </div>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         <span className="hint">Pratinjau Logo</span>
@@ -862,7 +905,11 @@ function App() {
                 {/* HEADER TOKO */}
                 <div className="s-header" style={{ textAlign: settings.align }}>
                   {settings.showLogo && logoImage && (
-                    <img src={logoImage} alt="Logo" className="s-logo-img" style={{ width: settings.logoWidth + 'px', height: settings.logoHeight + 'px', borderRadius: getLogoBorderRadius(), border: settings.logoBorderWidth > 0 ? `${settings.logoBorderWidth}px ${settings.logoBorderStyle} ${settings.logoBorderColor}` : 'none', backgroundColor: settings.logoBgColor, padding: '2px' }} />
+                    <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+                      <div style={getLogoWrapperStyle()}>
+                        <img src={logoImage} alt="Logo" style={getLogoImgStyle()} />
+                      </div>
+                    </div>
                   )}
                   {settings.showLogo && !logoImage && settings.logoText && (
                     <div className="s-logo">{settings.logoText}</div>
@@ -1123,7 +1170,9 @@ function App() {
                       </div>
                       {logoImage && (
                         <div className="logo-preview-box">
-                          <img src={logoImage} alt="Logo" style={{ maxWidth: '120px', maxHeight: '120px', objectFit: 'contain', borderRadius: getLogoBorderRadius(), border: settings.logoBorderWidth > 0 ? `${settings.logoBorderWidth}px ${settings.logoBorderStyle} ${settings.logoBorderColor}` : 'none', backgroundColor: settings.logoBgColor, padding: '2px' }} />
+                          <div style={getLogoWrapperStyle()}>
+                            <img src={logoImage} alt="Logo" style={getLogoImgStyle()} />
+                          </div>
                           <span className="hint">Logo akan tampil di atas nama toko</span>
                         </div>
                       )}
