@@ -85,6 +85,11 @@ function App() {
     logoText: '',
     logoWidth: 120,
     logoHeight: 120,
+    logoShape: 'none',
+    logoBorderWidth: 2,
+    logoBorderColor: '#000000',
+    logoBorderStyle: 'solid',
+    logoBgColor: 'transparent',
     borderStyle: 'equals', // equals, dashes, stars
   })
 
@@ -139,6 +144,15 @@ function App() {
   const fmt = (n) => {
     if (isNaN(n) || n === Infinity) return 'Rp0'
     return 'Rp' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  }
+
+  const getLogoBorderRadius = () => {
+    switch(settings.logoShape) {
+      case 'circle': return '50%'
+      case 'rounded': return '12px'
+      case 'capsule': return '999px'
+      default: return '0px'
+    }
   }
 
   const getBorderChar = () => {
@@ -210,6 +224,8 @@ function App() {
     setDiscount(0); setDiscountType('nominal')
     setTax(0); setTaxType('percent')
     setPayment(0); setPaymentMethod('Tunai')
+    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent' }))
+    setLogoImage('')
     nextId.current = 2
     setShowReset(false)
     msg('Data direset')
@@ -293,7 +309,7 @@ function App() {
     // Header Toko
     h += `<div style="text-align:${settings.align};text-transform:uppercase;">`
     if (settings.showLogo && logoImage) {
-      h += `<div style="text-align:center;margin-bottom:6px;"><img src="${logoImage}" style="width:${settings.logoWidth}px;height:${settings.logoHeight}px;object-fit:contain;" /></div>`
+      h += `<div style="text-align:center;margin-bottom:6px;"><img src="${logoImage}" style="width:${settings.logoWidth}px;height:${settings.logoHeight}px;object-fit:contain;border-radius:${getLogoBorderRadius()};border:${settings.logoBorderWidth > 0 ? settings.logoBorderWidth + 'px ' + settings.logoBorderStyle + ' ' + settings.logoBorderColor : 'none'};background-color:${settings.logoBgColor};padding:2px;" /></div>`
     } else if (settings.showLogo && settings.logoText) {
       h += `<div style="font-size:${fs*2.5}px;font-weight:bold;letter-spacing:3px;margin-bottom:4px;">${settings.logoText}</div>`
     }
@@ -592,23 +608,75 @@ function App() {
                       Tampilkan di Struk
                     </label>
                   </div>
-                  {logoImage && (
-                    <div className="logo-preview-box" style={{ flexDirection: 'row', alignItems: 'center', gap: '16px' }}>
-                      <img src={logoImage} alt="Logo" className="logo-preview-img" />
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <span className="hint">Ukuran Logo:</span>
+                  <div className="grid-2" style={{ marginTop: '12px' }}>
+                    <div className="fg">
+                      <label>Teks Logo (jika tanpa gambar)</label>
+                      <input value={settings.logoText} onChange={e => setSettings({...settings, logoText: e.target.value})} placeholder="Contoh: TOKO ANDA" />
+                    </div>
+                    <div className="fg">
+                      <label>Bentuk Logo</label>
+                      <select value={settings.logoShape} onChange={e => setSettings({...settings, logoShape: e.target.value})}>
+                        <option value="none">Kotak (Default)</option>
+                        <option value="rounded">Sudut Membulat</option>
+                        <option value="circle">Lingkaran</option>
+                        <option value="capsule">Kapsul / Pil</option>
+                      </select>
+                    </div>
+                    <div className="fg">
+                      <label>Ukuran Logo (px)</label>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input type="number" min="20" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: Math.max(20, Math.min(300, Number(e.target.value)))})} style={{ width: '80px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Lebar" />
+                        <span style={{ color: 'var(--text-muted)' }}>×</span>
+                        <input type="number" min="20" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: Math.max(20, Math.min(300, Number(e.target.value)))})} style={{ width: '80px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Tinggi" />
+                        <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>px</span>
+                      </div>
+                    </div>
+                    <div className="fg">
+                      <label>Garis Pinggir (Border)</label>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input type="number" min="0" max="15" value={settings.logoBorderWidth} onChange={e => setSettings({...settings, logoBorderWidth: Math.max(0, Math.min(15, Number(e.target.value)))})} style={{ width: '60px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="0" />
+                        <input type="color" value={settings.logoBorderColor} onChange={e => setSettings({...settings, logoBorderColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
+                        <select value={settings.logoBorderStyle} onChange={e => setSettings({...settings, logoBorderStyle: e.target.value})} style={{ padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none', flex: 1 }}>
+                          <option value="solid">Garis Penuh</option>
+                          <option value="dashed">Garis Putus-putus</option>
+                          <option value="dotted">Titik-titik</option>
+                          <option value="double">Ganda</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="fg full">
+                      <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                          <input type="number" min="30" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: Math.max(30, Math.min(300, Number(e.target.value)))})} style={{ width: '70px', padding: '6px 8px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Lebar" />
-                          <span style={{ color: 'var(--text-muted)' }}>×</span>
-                          <input type="number" min="30" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: Math.max(30, Math.min(300, Number(e.target.value)))})} style={{ width: '70px', padding: '6px 8px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Tinggi" />
-                          <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>px</span>
+                          <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, textTransform: 'none', letterSpacing: 'normal' }}>Warna Latar Logo:</label>
+                          <input type="color" value={settings.logoBgColor === 'transparent' ? '#ffffff' : settings.logoBgColor} onChange={e => setSettings({...settings, logoBgColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
                         </div>
-                        <span className="hint">Logo akan tampil di paling atas struk</span>
+                        <label className="cb">
+                          <input type="checkbox" checked={settings.logoBgColor !== 'transparent'} onChange={e => setSettings({...settings, logoBgColor: e.target.checked ? '#ffffff' : 'transparent'})} />
+                          <span className="cb-box"></span>
+                          Aktifkan Latar Belakang
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  {logoImage && (
+                    <div className="logo-preview-box" style={{ flexDirection: 'row', alignItems: 'center', gap: '16px', marginTop: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', background: 'var(--bg)', borderRadius: 'var(--radius-sm)' }}>
+                        <img src={logoImage} alt="Logo" style={{ width: settings.logoWidth + 'px', height: settings.logoHeight + 'px', objectFit: 'contain', borderRadius: getLogoBorderRadius(), border: settings.logoBorderWidth > 0 ? `${settings.logoBorderWidth}px ${settings.logoBorderStyle} ${settings.logoBorderColor}` : 'none', backgroundColor: settings.logoBgColor, padding: '2px' }} />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <span className="hint">Pratinjau Logo</span>
+                        <span className="hint" style={{ fontSize: '10px' }}>Logo akan tampil di paling atas struk</span>
                       </div>
                     </div>
                   )}
                   {!logoImage && (
-                    <span className="hint" style={{ marginTop: '8px', display: 'block' }}>Upload logo toko Anda (format PNG/JPG, max 2MB). Logo akan tampil di atas nama toko pada struk.</span>
+                    <div className="logo-preview-box" style={{ marginTop: '12px', padding: '12px', background: 'var(--bg)', borderRadius: 'var(--radius-sm)' }}>
+                      {settings.logoText ? (
+                        <div style={{ fontSize: '28px', fontWeight: 'bold', letterSpacing: '3px', color: 'var(--text)', textAlign: 'center' }}>{settings.logoText}</div>
+                      ) : (
+                        <span className="hint" style={{ display: 'block', textAlign: 'center' }}>Upload logo toko Anda (format PNG/JPG, max 2MB) atau isi teks logo di atas. Logo akan tampil di atas nama toko pada struk.</span>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -794,7 +862,7 @@ function App() {
                 {/* HEADER TOKO */}
                 <div className="s-header" style={{ textAlign: settings.align }}>
                   {settings.showLogo && logoImage && (
-                    <img src={logoImage} alt="Logo" className="s-logo-img" style={{ width: settings.logoWidth + 'px', height: settings.logoHeight + 'px' }} />
+                    <img src={logoImage} alt="Logo" className="s-logo-img" style={{ width: settings.logoWidth + 'px', height: settings.logoHeight + 'px', borderRadius: getLogoBorderRadius(), border: settings.logoBorderWidth > 0 ? `${settings.logoBorderWidth}px ${settings.logoBorderStyle} ${settings.logoBorderColor}` : 'none', backgroundColor: settings.logoBgColor, padding: '2px' }} />
                   )}
                   {settings.showLogo && !logoImage && settings.logoText && (
                     <div className="s-logo">{settings.logoText}</div>
@@ -1055,7 +1123,7 @@ function App() {
                       </div>
                       {logoImage && (
                         <div className="logo-preview-box">
-                          <img src={logoImage} alt="Logo" className="logo-preview-img" />
+                          <img src={logoImage} alt="Logo" style={{ maxWidth: '120px', maxHeight: '120px', objectFit: 'contain', borderRadius: getLogoBorderRadius(), border: settings.logoBorderWidth > 0 ? `${settings.logoBorderWidth}px ${settings.logoBorderStyle} ${settings.logoBorderColor}` : 'none', backgroundColor: settings.logoBgColor, padding: '2px' }} />
                           <span className="hint">Logo akan tampil di atas nama toko</span>
                         </div>
                       )}
@@ -1064,11 +1132,48 @@ function App() {
                       )}
                     </div>
                     <div className="fg">
+                      <label>Teks Logo (tanpa gambar)</label>
+                      <input value={settings.logoText} onChange={e => setSettings({...settings, logoText: e.target.value})} placeholder="Contoh: TOKO ANDA" />
+                    </div>
+                    <div className="fg">
+                      <label>Bentuk Logo</label>
+                      <select value={settings.logoShape} onChange={e => setSettings({...settings, logoShape: e.target.value})}>
+                        <option value="none">Kotak</option>
+                        <option value="rounded">Sudut Membulat</option>
+                        <option value="circle">Lingkaran</option>
+                        <option value="capsule">Kapsul</option>
+                      </select>
+                    </div>
+                    <div className="fg">
                       <label>Ukuran Logo (px)</label>
                       <div className="input-grp">
-                        <input type="number" min="30" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: Math.max(30, Math.min(300, Number(e.target.value)))})} placeholder="Lebar" />
+                        <input type="number" min="20" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: Math.max(20, Math.min(300, Number(e.target.value)))})} placeholder="L" />
                         <span className="input-sep">×</span>
-                        <input type="number" min="30" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: Math.max(30, Math.min(300, Number(e.target.value)))})} placeholder="Tinggi" />
+                        <input type="number" min="20" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: Math.max(20, Math.min(300, Number(e.target.value)))})} placeholder="T" />
+                      </div>
+                    </div>
+                    <div className="fg">
+                      <label>Border - Tebal (px)</label>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input type="number" min="0" max="15" value={settings.logoBorderWidth} onChange={e => setSettings({...settings, logoBorderWidth: Math.max(0, Math.min(15, Number(e.target.value)))})} style={{ width: '60px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="0" />
+                        <input type="color" value={settings.logoBorderColor} onChange={e => setSettings({...settings, logoBorderColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
+                        <select value={settings.logoBorderStyle} onChange={e => setSettings({...settings, logoBorderStyle: e.target.value})} style={{ padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none', flex: 1 }}>
+                          <option value="solid">Penuh</option>
+                          <option value="dashed">Putus-putus</option>
+                          <option value="dotted">Titik</option>
+                          <option value="double">Ganda</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="fg full">
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, textTransform: 'none', letterSpacing: 'normal' }}>Warna Latar:</label>
+                        <input type="color" value={settings.logoBgColor === 'transparent' ? '#ffffff' : settings.logoBgColor} onChange={e => setSettings({...settings, logoBgColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
+                        <label className="cb">
+                          <input type="checkbox" checked={settings.logoBgColor !== 'transparent'} onChange={e => setSettings({...settings, logoBgColor: e.target.checked ? '#ffffff' : 'transparent'})} />
+                          <span className="cb-box"></span>
+                          Latar Belakang Putih
+                        </label>
                       </div>
                     </div>
                   </>
