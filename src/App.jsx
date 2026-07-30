@@ -569,6 +569,51 @@ function App() {
         {/* ==================== TAB INPUT ==================== */}
         {tab === 'input' && (
           <div className="tab-in">
+            {/* LOGO UPLOAD */}
+            <section className="card">
+              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><h3>Logo Toko</h3></div>
+              <div className="grid-2">
+                <div className="fg full">
+                  <div className="logo-upload-row">
+                    <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} hidden />
+                    <button className="btn-sec" onClick={() => logoInputRef.current?.click()}>
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      Pilih Gambar Logo
+                    </button>
+                    {logoImage && (
+                      <button className="btn-dgr" onClick={removeLogo}>
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        Hapus Logo
+                      </button>
+                    )}
+                    <label className="cb" style={{ marginLeft: '8px' }}>
+                      <input type="checkbox" checked={settings.showLogo} onChange={e => setSettings({...settings, showLogo: e.target.checked})} />
+                      <span className="cb-box"></span>
+                      Tampilkan di Struk
+                    </label>
+                  </div>
+                  {logoImage && (
+                    <div className="logo-preview-box" style={{ flexDirection: 'row', alignItems: 'center', gap: '16px' }}>
+                      <img src={logoImage} alt="Logo" className="logo-preview-img" />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <span className="hint">Ukuran Logo:</span>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <input type="number" min="30" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: Math.max(30, Math.min(300, Number(e.target.value)))})} style={{ width: '70px', padding: '6px 8px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Lebar" />
+                          <span style={{ color: 'var(--text-muted)' }}>×</span>
+                          <input type="number" min="30" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: Math.max(30, Math.min(300, Number(e.target.value)))})} style={{ width: '70px', padding: '6px 8px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Tinggi" />
+                          <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>px</span>
+                        </div>
+                        <span className="hint">Logo akan tampil di paling atas struk</span>
+                      </div>
+                    </div>
+                  )}
+                  {!logoImage && (
+                    <span className="hint" style={{ marginTop: '8px', display: 'block' }}>Upload logo toko Anda (format PNG/JPG, max 2MB). Logo akan tampil di atas nama toko pada struk.</span>
+                  )}
+                </div>
+              </div>
+            </section>
+
             {/* HEADER TOKO */}
             <section className="card">
               <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M4 2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M8 6h8"/><path d="M8 10h8"/><path d="M8 14h5"/><path d="M8 18h2"/></svg><h3>Informasi Toko</h3></div>
