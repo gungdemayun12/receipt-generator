@@ -2,6 +2,10 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import './App.css'
 import JsBarcode from 'jsbarcode'
 
+function generateBarcodeCode() {
+  return 'INV-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase()
+}
+
 const FONT_OPTIONS = [
   { name: 'Courier Prime (Default)', value: "'Courier Prime', 'Courier New', monospace" },
   { name: 'Inconsolata', value: "'Inconsolata', monospace" },
@@ -90,6 +94,8 @@ function App() {
     logoBorderColor: '#000000',
     logoBorderStyle: 'solid',
     logoBgColor: 'transparent',
+    barcodeCode: generateBarcodeCode(),
+    barcodeWidth: 3,
     borderStyle: 'equals', // equals, dashes, stars
   })
 
@@ -120,20 +126,22 @@ function App() {
 
   // Generate barcode otomatis di preview
   useEffect(() => {
-    if (barcodeRef.current && settings.showBarcode && header.receiptNumber) {
+    if (barcodeRef.current && settings.showBarcode && settings.barcodeCode) {
       try {
-        JsBarcode(barcodeRef.current, header.receiptNumber, {
+        JsBarcode(barcodeRef.current, settings.barcodeCode, {
           format: "CODE128",
-          width: 2,
-          height: 50,
-          displayValue: false,
+          width: settings.barcodeWidth,
+          height: 60,
+          displayValue: true,
+          fontSize: 14,
+          fontOptions: ['Courier Prime', 'monospace'],
           background: "#ffffff",
           lineColor: settings.fontColor === '#000000' ? '#000000' : settings.fontColor,
-          margin: 0,
+          margin: 10,
         })
       } catch { /* noop */ }
     }
-  }, [settings.showBarcode, header.receiptNumber, settings.fontColor])
+  }, [settings.showBarcode, settings.barcodeCode, settings.fontColor, settings.barcodeWidth])
 
   const subtotal = items.reduce((s, i) => s + (i.qty * i.price), 0)
   const discVal = discountType === 'percent' ? subtotal * (discount / 100) : discount
@@ -265,7 +273,7 @@ function App() {
     setDiscount(0); setDiscountType('nominal')
     setTax(0); setTaxType('percent')
     setPayment(0); setPaymentMethod('Tunai')
-    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent' }))
+    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showBarcode: true, barcodeCode: generateBarcodeCode(), barcodeWidth: 3 }))
     setLogoImage('')
     nextId.current = 2
     setShowReset(false)
@@ -314,19 +322,24 @@ function App() {
 
   // Generate barcode SVG untuk print
   const genBarcodeSVG = (w) => {
-    if (!settings.showBarcode || !header.receiptNumber) return ''
+    if (!settings.showBarcode || !settings.barcodeCode) return ''
     try {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-      JsBarcode(svg, header.receiptNumber, {
-        format: "CODE128", width: 2, height: 50,
-        displayValue: false, background: "#ffffff",
+      JsBarcode(svg, settings.barcodeCode, {
+        format: "CODE128",
+        width: settings.barcodeWidth,
+        height: 60,
+        displayValue: true,
+        fontSize: 14,
+        fontOptions: ['Courier Prime', 'monospace'],
+        background: "#ffffff",
         lineColor: settings.fontColor === '#000000' ? '#000000' : settings.fontColor,
-        margin: 0,
+        margin: 10,
       })
       let str = new XMLSerializer().serializeToString(svg)
       str = str.replace(/width="[^"]*"/, `width="${w}"`)
-      str = str.replace(/height="[^"]*"/, 'height="50"')
-      str = str.replace(/viewBox="[^"]*"/, `viewBox="0 0 ${w} 50"`)
+      str = str.replace(/height="[^"]*"/, 'height="70"')
+      str = str.replace(/viewBox="[^"]*"/, `viewBox="0 0 ${w} 70"`)
       return str
     } catch { return '' }
   }
@@ -447,11 +460,11 @@ function App() {
     }
 
     // Barcode CODE128
-    if (settings.showBarcode && header.receiptNumber) {
+    if (settings.showBarcode && settings.barcodeCode) {
       const svg = genBarcodeSVG(bw)
       if (svg) {
-        h += `<div style="text-align:center;margin:12px 0 6px;">${svg}`
-        h += `<div style="font-size:${fs+1}px;letter-spacing:4px;margin-top:4px;font-weight:bold;">${header.receiptNumber}</div></div>`
+        h += `<div style="text-align:center;margin:12px 0 6px;font-family:'Courier Prime',monospace;">${svg}`
+        h += `<div style="font-size:${fs+1}px;letter-spacing:4px;margin-top:4px;font-weight:bold;">${settings.barcodeCode}</div></div>`
         h += `<div style="margin:4px 0;letter-spacing:2px;text-align:center;">${thinSep}</div>`
       }
     }
@@ -565,9 +578,9 @@ function App() {
       p.push(...enc.encode(`Bayar${' '.repeat(tw-5)}${fmt(payment).padStart(10)}\n`))
       p.push(...enc.encode(`Kembali${' '.repeat(tw-7)}${fmt(change).padStart(10)}\n`))
     }
-    if (settings.showBarcode && header.receiptNumber) {
+    if (settings.showBarcode && settings.barcodeCode) {
       p.push(0x1D, 0x6B, 0x02)
-      p.push(...enc.encode(header.receiptNumber + '\x00'))
+      p.push(...enc.encode(settings.barcodeCode + '\x00'))
     }
     if (header.footer) {
       p.push(0x1B, 0x61, 0x01)
@@ -1017,10 +1030,10 @@ function App() {
                 )}
 
                 {/* BARCODE CODE128 */}
-                {settings.showBarcode && header.receiptNumber && (
+                {settings.showBarcode && settings.barcodeCode && (
                   <div className="s-barcode">
-                    <svg ref={barcodeRef} className="s-bcode" style={{ color: settings.fontColor }}></svg>
-                    <div className="s-btext">{header.receiptNumber}</div>
+                    <svg ref={barcodeRef} className="s-bcode" style={{ color: settings.fontColor, width: '100%', height: '70px' }}></svg>
+                    <div className="s-btext">{settings.barcodeCode}</div>
                   </div>
                 )}
 
@@ -1108,6 +1121,29 @@ function App() {
                   </label>
                   <span className="hint">Generate otomatis dari nomor struk</span>
                 </div>
+                {settings.showBarcode && (
+                  <>
+                    <div className="fg">
+                      <label>Kode Barcode</label>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input value={settings.barcodeCode} onChange={e => setSettings({...settings, barcodeCode: e.target.value})} placeholder="Contoh: INV-001" style={{ flex: 1 }} />
+                        <button className="btn-sec" onClick={() => setSettings({...settings, barcodeCode: generateBarcodeCode()})} title="Generate kode acak">
+                          🎲 Acak
+                        </button>
+                      </div>
+                      <span className="hint">Kode unik untuk barcode struk</span>
+                    </div>
+                    <div className="fg" style={{ maxWidth: '200px' }}>
+                      <label>Ketebalan Bar (Lebar)</label>
+                      <select value={settings.barcodeWidth} onChange={e => setSettings({...settings, barcodeWidth: Number(e.target.value)})}>
+                        <option value="2">2 - Normal</option>
+                        <option value="3">3 - Tebal</option>
+                        <option value="4">4 - Sangat Tebal</option>
+                        <option value="5">5 - Maksimal</option>
+                      </select>
+                    </div>
+                  </>
+                )}
                 <div className="fg">
                   <label className="cb">
                     <input type="checkbox" checked={settings.showCustomer} onChange={e => setSettings({...settings, showCustomer: e.target.checked})} />
