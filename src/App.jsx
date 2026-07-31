@@ -929,7 +929,7 @@ function App() {
 
             {/* STRUK PREVIEW */}
             <div className="prev-wrap">
-              <div className={`struk ${settings.receiptLayout}`} style={{
+              <div className="struk" style={{
                 width: '280px',
                 fontFamily: settings.fontFamily,
                 color: settings.fontColor,
@@ -1076,19 +1076,6 @@ function App() {
             <div className="card">
               <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><h3>Pengaturan Tampilan Struk</h3></div>
               <div className="grid-2">
-                <div className="fg full">
-                  <label>Desain / Layout Struk</label>
-                  <select value={settings.receiptLayout} onChange={e => setSettings({...settings, receiptLayout: e.target.value})} style={{fontWeight: 'bold', padding: '10px'}}>
-                    <option value="layout1">Layout 1: Classic (Default)</option>
-                    <option value="layout2">Layout 2: Modern Minimalis</option>
-                    <option value="layout3">Layout 3: Elegant</option>
-                    <option value="layout4">Layout 4: Bold Header</option>
-                    <option value="layout5">Layout 5: Compact</option>
-                    <option value="layout6">Layout 6: Restaurant Style</option>
-                  </select>
-                  <span className="hint">Pilih gaya tampilan struk yang Anda inginkan. Lihat perubahannya di tab Preview.</span>
-                </div>
-                {/* PAPER SIZE OPTION REMOVED */}
                 <div className="fg">
                   <label>Jenis Font</label>
                   <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
