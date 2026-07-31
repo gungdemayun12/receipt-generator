@@ -66,8 +66,19 @@ function App() {
     customerAddress: '',
     customerPhone: '',
     note: '',
+    customFields: [],
     footer: 'Terima kasih telah berbelanja di toko kami\nBarang yang sudah dibeli tidak dapat ditukar kembali\nSilakan cek kembali barang belanjaan Anda',
   })
+
+  const addCustomField = () => {
+    setHeader({ ...header, customFields: [...header.customFields, { id: Date.now(), label: '', value: '' }] })
+  }
+  const updateCustomField = (id, key, val) => {
+    setHeader({ ...header, customFields: header.customFields.map(cf => cf.id === id ? { ...cf, [key]: val } : cf) })
+  }
+  const removeCustomField = (id) => {
+    setHeader({ ...header, customFields: header.customFields.filter(cf => cf.id !== id) })
+  }
 
   const [items, setItems] = useState([
     { id: 1, name: 'Barang 1', qty: 2, unit: 'Pcs', price: 15000 }
@@ -105,6 +116,7 @@ function App() {
     qrCodeBorderColor: '#000000',
     qrCodeFrameWidth: 4,
     borderStyle: 'equals', // equals, dashes, stars
+    receiptLayout: 'layout1',
   })
 
   const [discount, setDiscount] = useState(0)
@@ -749,6 +761,30 @@ function App() {
               </div>
             </section>
 
+            {/* CUSTOM FIELDS / FIELD KUSTOM */}
+            <section className="card">
+              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><h3>Data Tambahan Kustom</h3></div>
+              <div className="fg full">
+                <span className="hint" style={{marginBottom: '12px', display: 'block'}}>Tambahkan informasi lain yang ingin dimunculkan di struk (Misal: No. Meja, Nama Server, Plat Nomor, dll)</span>
+              </div>
+              {header.customFields.map((cf, idx) => (
+                <div className="item-row" key={cf.id} style={{marginBottom: '12px'}}>
+                  <div className="item-num">{idx + 1}</div>
+                  <div className="item-body" style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%'}}>
+                    <div className="fg" style={{marginBottom: 0}}><input value={cf.label} onChange={e => updateCustomField(cf.id, 'label', e.target.value)} placeholder="Nama Label (Misal: No. Meja)" /></div>
+                    <div className="fg" style={{marginBottom: 0}}><input value={cf.value} onChange={e => updateCustomField(cf.id, 'value', e.target.value)} placeholder="Isi Data (Misal: 14)" /></div>
+                  </div>
+                  <button className="btn-del" onClick={() => removeCustomField(cf.id)}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+              ))}
+              <button className="btn-add" onClick={addCustomField}>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Field
+              </button>
+            </section>
+
             {/* ITEMS */}
             <section className="card">
               <div className="card-h">
@@ -892,7 +928,7 @@ function App() {
 
             {/* STRUK PREVIEW */}
             <div className="prev-wrap">
-              <div className="struk" style={{
+              <div className={`struk ${settings.receiptLayout}`} style={{
                 width: settings.paperSize === 58 ? '280px' : '420px',
                 fontFamily: settings.fontFamily,
                 color: settings.fontColor,
@@ -951,6 +987,15 @@ function App() {
                   {header.customerPhone && settings.showCustomer && (
                     <div className="s-dotrow"><span className="s-lb">HP</span><span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - 3 - header.customerPhone.length))}</span><span className="s-val">{header.customerPhone}</span></div>
                   )}
+                  {header.customFields.map(cf => (
+                    cf.label && cf.value && (
+                      <div className="s-dotrow" key={cf.id}>
+                        <span className="s-lb">{cf.label}</span>
+                        <span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - cf.label.length - cf.value.length))}</span>
+                        <span className="s-val">{cf.value}</span>
+                      </div>
+                    )
+                  ))}
                   {header.note && (
                     <div className="s-note"><i>{header.note.split('\n').map((l, i) => <div key={i}>{l}</div>)}</i></div>
                   )}
@@ -1054,6 +1099,18 @@ function App() {
             <div className="card">
               <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><h3>Pengaturan Tampilan Struk</h3></div>
               <div className="grid-2">
+                <div className="fg full">
+                  <label>Desain / Layout Struk</label>
+                  <select value={settings.receiptLayout} onChange={e => setSettings({...settings, receiptLayout: e.target.value})} style={{fontWeight: 'bold', padding: '10px'}}>
+                    <option value="layout1">Layout 1: Classic (Default)</option>
+                    <option value="layout2">Layout 2: Modern Minimalis</option>
+                    <option value="layout3">Layout 3: Elegant</option>
+                    <option value="layout4">Layout 4: Bold Header</option>
+                    <option value="layout5">Layout 5: Compact</option>
+                    <option value="layout6">Layout 6: Restaurant Style</option>
+                  </select>
+                  <span className="hint">Pilih gaya tampilan struk yang Anda inginkan. Lihat perubahannya di tab Preview.</span>
+                </div>
                 <div className="fg">
                   <label>Ukuran Kertas</label>
                   <select value={settings.paperSize} onChange={e => setSettings({...settings, paperSize: Number(e.target.value)})}>

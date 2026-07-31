@@ -756,6 +756,58 @@ main {
 .modal p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
 .modal-act { display: flex; gap: 8px; justify-content: center; }
 
+/* RECEIPT LAYOUTS */
+/* Layout 1: Classic (Default) is implicitly handled by existing styles */
+.struk.layout1 {
+  /* Default styles apply */
+}
+
+/* Layout 2: Modern Minimalis */
+.struk.layout2 .s-namatoko { letter-spacing: 2px; font-weight: 500; }
+.struk.layout2 .s-sep, .struk.layout2 .s-sep-thin { opacity: 0.5; font-weight: 300; }
+.struk.layout2 .s-items-h { border-bottom: 1px solid rgba(0,0,0,0.2); border-top: 1px solid rgba(0,0,0,0.2); padding: 4px 0; }
+.struk.layout2 .s-item { border-bottom: none; }
+.struk.layout2 .s-total-r { opacity: 0.9; }
+.struk.layout2 .s-grand { border-top: 2px solid rgba(0,0,0,0.8); border-bottom: 2px solid rgba(0,0,0,0.8); padding: 6px 0; margin: 4px 0; font-weight: 600; }
+
+/* Layout 3: Elegant */
+.struk.layout3 { font-family: 'Times New Roman', serif !important; }
+.struk.layout3 .s-namatoko { font-style: italic; font-weight: bold; font-size: 2.2em; text-transform: capitalize; }
+.struk.layout3 .s-sep { line-height: 0.8; margin: 8px 0; }
+.struk.layout3 .s-items-h { font-style: italic; border-bottom: 2px double #000; padding-bottom: 4px; }
+.struk.layout3 .s-item { padding: 4px 0; border-bottom: 1px dotted rgba(0,0,0,0.3); }
+.struk.layout3 .s-grand { font-size: 1.3em; font-style: italic; }
+
+/* Layout 4: Bold Header */
+.struk.layout4 .s-namatoko { font-size: 2.8em; font-weight: 900; text-shadow: 1px 1px 0 #ccc; transform: scaleY(1.1); }
+.struk.layout4 .s-alamat, .struk.layout4 .s-header { font-weight: bold; }
+.struk.layout4 .s-sep { font-weight: 900; letter-spacing: 0; }
+.struk.layout4 .s-items-h { background: #f0f0f0; color: #000; padding: 4px; }
+.struk.layout4 .s-grand { background: #000; color: #fff; padding: 8px; margin: 8px 0; text-align: center; justify-content: center; gap: 20px; border-radius: 4px; }
+
+/* Layout 5: Compact */
+.struk.layout5 { padding: 8px 4px; line-height: 1.1; min-height: auto; }
+.struk.layout5 .s-namatoko { font-size: 1.5em; margin-bottom: 0; }
+.struk.layout5 .s-sep, .struk.layout5 .s-sep-thin { margin: 1px 0; letter-spacing: 0; font-size: 0.9em; }
+.struk.layout5 .s-item { padding: 0; border-bottom: none; }
+.struk.layout5 .s-items-h { padding: 1px 0; margin-bottom: 0; font-size: 0.9em; }
+.struk.layout5 .s-grand { padding: 1px 0; font-size: 1.2em; }
+.struk.layout5 .s-barcode { margin: 2px 0; }
+
+/* Layout 6: Restaurant Style */
+.struk.layout6 .s-info { display: flex; flex-direction: column; gap: 2px; border: 1px dashed rgba(0,0,0,0.5); padding: 6px; margin: 6px 0; }
+.struk.layout6 .s-dotrow { justify-content: space-between; }
+.struk.layout6 .s-dots { display: none; }
+.struk.layout6 .s-items-h { display: none; }
+.struk.layout6 .s-item-r { flex-wrap: wrap; }
+.struk.layout6 .s-cn { width: 100%; font-weight: bold; }
+.struk.layout6 .s-cq, .struk.layout6 .s-ch { width: auto; color: #555; }
+.struk.layout6 .s-cq::after { content: " x "; }
+.struk.layout6 .s-cs { flex: 1; text-align: right; font-weight: bold; }
+.struk.layout6 .s-item { border-bottom: 1px solid rgba(0,0,0,0.1); padding: 6px 0; }
+.struk.layout6 .s-note { text-align: center; font-style: italic; background: rgba(0,0,0,0.05); padding: 4px; border-radius: 4px; }
+.struk.layout6 .s-grand { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .app { padding: 0 12px 80px; }
