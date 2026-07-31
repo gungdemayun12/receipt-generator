@@ -1,8 +1,9 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import './App.css'
-import JsBarcode from 'jsbarcode'
+import { QRCode } from 'qrcode.react'
+import QRCodeLib from 'qrcode'
 
-function generateBarcodeCode() {
+function generateQRCodeData() {
   return 'INV-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase()
 }
 
@@ -77,7 +78,7 @@ function App() {
     fontFamily: "'Courier Prime', 'Courier New', monospace",
     fontSize: 12,
     fontColor: '#000000',
-    showBarcode: true,
+    showQRCode: true,
     align: 'center',
     charPerLine: 32,
     showCustomer: true,
@@ -94,8 +95,11 @@ function App() {
     logoBorderColor: '#000000',
     logoBorderStyle: 'solid',
     logoBgColor: 'transparent',
-    barcodeCode: generateBarcodeCode(),
-    barcodeWidth: 3,
+    qrCodeData: generateQRCodeData(),
+    qrCodeSize: 160,
+    qrCodeFgColor: '#000000',
+    qrCodeBgColor: '#ffffff',
+    qrCodeLevel: 'M',
     borderStyle: 'equals', // equals, dashes, stars
   })
 
@@ -115,7 +119,6 @@ function App() {
   const [receiptList, setReceiptList] = useState([])
   const [logoImage, setLogoImage] = useState('')
 
-  const barcodeRef = useRef(null)
   const logoInputRef = useRef(null)
   const nextId = useRef(2)
 
@@ -123,25 +126,6 @@ function App() {
     setNotif({ text, type })
     setTimeout(() => setNotif(null), 2500)
   }, [])
-
-  // Generate barcode otomatis di preview
-  useEffect(() => {
-    if (barcodeRef.current && settings.showBarcode && settings.barcodeCode) {
-      try {
-        JsBarcode(barcodeRef.current, settings.barcodeCode, {
-          format: "CODE128",
-          width: settings.barcodeWidth,
-          height: 60,
-          displayValue: true,
-          fontSize: 14,
-          fontOptions: ['Courier Prime', 'monospace'],
-          background: "#ffffff",
-          lineColor: settings.fontColor === '#000000' ? '#000000' : settings.fontColor,
-          margin: 10,
-        })
-      } catch { /* noop */ }
-    }
-  }, [settings.showBarcode, settings.barcodeCode, settings.fontColor, settings.barcodeWidth])
 
   const subtotal = items.reduce((s, i) => s + (i.qty * i.price), 0)
   const discVal = discountType === 'percent' ? subtotal * (discount / 100) : discount
@@ -273,7 +257,7 @@ function App() {
     setDiscount(0); setDiscountType('nominal')
     setTax(0); setTaxType('percent')
     setPayment(0); setPaymentMethod('Tunai')
-    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showBarcode: true, barcodeCode: generateBarcodeCode(), barcodeWidth: 3 }))
+    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: true, qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M' }))
     setLogoImage('')
     nextId.current = 2
     setShowReset(false)
@@ -320,27 +304,20 @@ function App() {
     e.target.value = ''
   }
 
-  // Generate barcode SVG untuk print
-  const genBarcodeSVG = (w) => {
-    if (!settings.showBarcode || !settings.barcodeCode) return ''
+  // Generate QR Code SVG untuk print
+  const genQRCodeSVG = async (w) => {
+    if (!settings.showQRCode || !settings.qrCodeData) return ''
     try {
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-      JsBarcode(svg, settings.barcodeCode, {
-        format: "CODE128",
-        width: settings.barcodeWidth,
-        height: 60,
-        displayValue: true,
-        fontSize: 14,
-        fontOptions: ['Courier Prime', 'monospace'],
-        background: "#ffffff",
-        lineColor: settings.fontColor === '#000000' ? '#000000' : settings.fontColor,
-        margin: 10,
+      return await QRCodeLib.toString(settings.qrCodeData, {
+        type: 'svg',
+        width: w,
+        margin: 2,
+        color: {
+          dark: settings.qrCodeFgColor,
+          light: settings.qrCodeBgColor,
+        },
+        errorCorrectionLevel: settings.qrCodeLevel,
       })
-      let str = new XMLSerializer().serializeToString(svg)
-      str = str.replace(/width="[^"]*"/, `width="${w}"`)
-      str = str.replace(/height="[^"]*"/, 'height="70"')
-      str = str.replace(/viewBox="[^"]*"/, `viewBox="0 0 ${w} 70"`)
-      return str
     } catch { return '' }
   }
 
@@ -351,7 +328,6 @@ function App() {
     const color = settings.fontColor
     const font = settings.fontFamily
     const w = settings.paperSize === 58 ? 280 : 420
-    const bw = settings.paperSize === 58 ? 200 : 300
     const bc = getBorderChar()
     const sep = bc.repeat(cp)
     const thinSep = '-'.repeat(cp)
@@ -459,15 +435,8 @@ function App() {
       h += `<div style="margin:4px 0;letter-spacing:2px;text-align:center;">${thinSep}</div>`
     }
 
-    // Barcode CODE128
-    if (settings.showBarcode && settings.barcodeCode) {
-      const svg = genBarcodeSVG(bw)
-      if (svg) {
-        h += `<div style="text-align:center;margin:12px 0 6px;font-family:'Courier Prime',monospace;">${svg}`
-        h += `<div style="font-size:${fs+1}px;letter-spacing:4px;margin-top:4px;font-weight:bold;">${settings.barcodeCode}</div></div>`
-        h += `<div style="margin:4px 0;letter-spacing:2px;text-align:center;">${thinSep}</div>`
-      }
-    }
+    // QR Code placeholder
+    h += `<div id="qr-print-area" style="text-align:center;margin:12px 0 6px;"></div>`
 
     // Footer
     if (header.footer) {
@@ -578,9 +547,8 @@ function App() {
       p.push(...enc.encode(`Bayar${' '.repeat(tw-5)}${fmt(payment).padStart(10)}\n`))
       p.push(...enc.encode(`Kembali${' '.repeat(tw-7)}${fmt(change).padStart(10)}\n`))
     }
-    if (settings.showBarcode && settings.barcodeCode) {
-      p.push(0x1D, 0x6B, 0x02)
-      p.push(...enc.encode(settings.barcodeCode + '\x00'))
+    if (settings.showQRCode && settings.qrCodeData) {
+      p.push(...enc.encode('\nQR: ' + settings.qrCodeData + '\n'))
     }
     if (header.footer) {
       p.push(0x1B, 0x61, 0x01)
@@ -903,7 +871,7 @@ function App() {
                 <span>📏 {settings.fontSize}px</span>
                 <span>💰 {fmt(total)}</span>
                 <span>📦 {items.length} item</span>
-                {settings.showBarcode ? <span>🔲 Barcode ON</span> : <span>🔳 Barcode OFF</span>}
+                {settings.showQRCode ? <span>🔲 QR Code ON</span> : <span>🔳 QR Code OFF</span>}
               </div>
             </div>
 
@@ -1030,10 +998,17 @@ function App() {
                 )}
 
                 {/* BARCODE CODE128 */}
-                {settings.showBarcode && settings.barcodeCode && (
+                {settings.showQRCode && settings.qrCodeData && (
                   <div className="s-barcode">
-                    <svg ref={barcodeRef} className="s-bcode" style={{ color: settings.fontColor, width: '100%', height: '70px' }}></svg>
-                    <div className="s-btext">{settings.barcodeCode}</div>
+                    <QRCode
+                      value={settings.qrCodeData}
+                      size={settings.qrCodeSize}
+                      fgColor={settings.qrCodeFgColor}
+                      bgColor={settings.qrCodeBgColor}
+                      level={settings.qrCodeLevel}
+                      includeMargin={true}
+                    />
+                    <div className="s-btext" style={{ fontSize: '10px', marginTop: '4px', color: '#888' }}>Scan untuk info</div>
                   </div>
                 )}
 
@@ -1115,32 +1090,52 @@ function App() {
                 </div>
                 <div className="fg">
                   <label className="cb">
-                    <input type="checkbox" checked={settings.showBarcode} onChange={e => setSettings({...settings, showBarcode: e.target.checked})} />
+                    <input type="checkbox" checked={settings.showQRCode} onChange={e => setSettings({...settings, showQRCode: e.target.checked})} />
                     <span className="cb-box"></span>
-                    Tampilkan Barcode (CODE128)
+                    Tampilkan QR Code
                   </label>
-                  <span className="hint">Generate otomatis dari nomor struk</span>
+                  <span className="hint">QR Code kotak untuk struk</span>
                 </div>
-                {settings.showBarcode && (
+                {settings.showQRCode && (
                   <>
                     <div className="fg">
-                      <label>Kode Barcode</label>
+                      <label>Data QR Code</label>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <input value={settings.barcodeCode} onChange={e => setSettings({...settings, barcodeCode: e.target.value})} placeholder="Contoh: INV-001" style={{ flex: 1 }} />
-                        <button className="btn-sec" onClick={() => setSettings({...settings, barcodeCode: generateBarcodeCode()})} title="Generate kode acak">
+                        <input value={settings.qrCodeData} onChange={e => setSettings({...settings, qrCodeData: e.target.value})} placeholder="Contoh: INV-001" style={{ flex: 1 }} />
+                        <button className="btn-sec" onClick={() => setSettings({...settings, qrCodeData: generateQRCodeData()})} title="Generate kode acak">
                           🎲 Acak
                         </button>
                       </div>
-                      <span className="hint">Kode unik untuk barcode struk</span>
+                      <span className="hint">Data yang akan di-encode ke QR Code</span>
                     </div>
-                    <div className="fg" style={{ maxWidth: '200px' }}>
-                      <label>Ketebalan Bar (Lebar)</label>
-                      <select value={settings.barcodeWidth} onChange={e => setSettings({...settings, barcodeWidth: Number(e.target.value)})}>
-                        <option value="2">2 - Normal</option>
-                        <option value="3">3 - Tebal</option>
-                        <option value="4">4 - Sangat Tebal</option>
-                        <option value="5">5 - Maksimal</option>
+                    <div className="fg">
+                      <label>Ukuran QR Code (px)</label>
+                      <select value={settings.qrCodeSize} onChange={e => setSettings({...settings, qrCodeSize: Number(e.target.value)})}>
+                        <option value={120}>120 px - Kecil</option>
+                        <option value={140}>140 px</option>
+                        <option value={160}>160 px - Sedang</option>
+                        <option value={180}>180 px</option>
+                        <option value={200}>200 px - Besar</option>
                       </select>
+                    </div>
+                    <div className="fg">
+                      <label>Warna QR Code</label>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input type="color" value={settings.qrCodeFgColor} onChange={e => setSettings({...settings, qrCodeFgColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
+                        <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Foreground</span>
+                        <input type="color" value={settings.qrCodeBgColor} onChange={e => setSettings({...settings, qrCodeBgColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
+                        <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Background</span>
+                      </div>
+                    </div>
+                    <div className="fg">
+                      <label>Level Koreksi Error</label>
+                      <select value={settings.qrCodeLevel} onChange={e => setSettings({...settings, qrCodeLevel: e.target.value})}>
+                        <option value="L">L - Rendah (7%)</option>
+                        <option value="M">M - Sedang (15%)</option>
+                        <option value="Q">Q - Tinggi (25%)</option>
+                        <option value="H">H - Sangat Tinggi (30%)</option>
+                      </select>
+                      <span className="hint">Semakin tinggi, semakin tahan terhadap kerusakan</span>
                     </div>
                   </>
                 )}
