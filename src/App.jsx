@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import './App.css'
-import { QRCode } from 'qrcode.react'
+import { QRCodeSVG } from 'qrcode.react'
 import QRCodeLib from 'qrcode'
 
 function generateQRCodeData() {
@@ -100,6 +100,10 @@ function App() {
     qrCodeFgColor: '#000000',
     qrCodeBgColor: '#ffffff',
     qrCodeLevel: 'M',
+    qrCodeBorder: true,
+    qrCodeBorderWidth: 2,
+    qrCodeBorderColor: '#000000',
+    qrCodeFrameWidth: 4,
     borderStyle: 'equals', // equals, dashes, stars
   })
 
@@ -257,7 +261,7 @@ function App() {
     setDiscount(0); setDiscountType('nominal')
     setTax(0); setTaxType('percent')
     setPayment(0); setPaymentMethod('Tunai')
-    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: true, qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M' }))
+    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: true, qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: true, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
     setLogoImage('')
     nextId.current = 2
     setShowReset(false)
@@ -308,21 +312,26 @@ function App() {
   const genQRCodeSVG = async (w) => {
     if (!settings.showQRCode || !settings.qrCodeData) return ''
     try {
-      return await QRCodeLib.toString(settings.qrCodeData, {
+      const margin = settings.qrCodeFrameWidth || 4
+      const result = await QRCodeLib.toString(settings.qrCodeData, {
         type: 'svg',
         width: w,
-        margin: 2,
+        margin,
         color: {
           dark: settings.qrCodeFgColor,
           light: settings.qrCodeBgColor,
         },
         errorCorrectionLevel: settings.qrCodeLevel,
       })
+      if (settings.qrCodeBorder) {
+        return result.replace(/<svg/, `<svg style="border:${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor};border-radius:4px;padding:${margin}px;background:${settings.qrCodeBgColor}"`)
+      }
+      return result
     } catch { return '' }
   }
 
   // Generate HTML struk untuk print
-  const genPrintHTML = () => {
+  const genPrintHTML = (qrSVG = '') => {
     const fs = settings.fontSize
     const cp = settings.charPerLine
     const color = settings.fontColor
@@ -435,8 +444,10 @@ function App() {
       h += `<div style="margin:4px 0;letter-spacing:2px;text-align:center;">${thinSep}</div>`
     }
 
-    // QR Code placeholder
-    h += `<div id="qr-print-area" style="text-align:center;margin:12px 0 6px;"></div>`
+    // QR Code
+    if (qrSVG) {
+      h += `<div style="text-align:center;margin:12px 0 6px;">${qrSVG}</div>`
+    }
 
     // Footer
     if (header.footer) {
@@ -453,13 +464,17 @@ function App() {
     return h
   }
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
     const pw = window.open('', '_blank')
     if (!pw) { msg('Izinkan popup!', 'error'); return }
+    let qrSVG = ''
+    if (settings.showQRCode && settings.qrCodeData) {
+      qrSVG = await genQRCodeSVG(300)
+    }
     pw.document.write(`<!DOCTYPE html><html><head><title>Cetak Struk - ${header.storeName}</title>
       <style>@page{margin:0}body{margin:0;padding:0;display:flex;justify-content:center;background:#f0f0f0}@media print{body{background:#fff}}</style>
       <link href="https://fonts.googleapis.com/css2?family=Inconsolata&family=VT323&family=Space+Mono&family=Share+Tech+Mono&family=Courier+Prime&display=swap" rel="stylesheet">
-      </head><body>${genPrintHTML()}<script>window.onload=function(){window.print();window.close()}</script></body></html>`)
+      </head><body>${genPrintHTML(qrSVG)}<script>window.onload=function(){window.print();window.close()}</script></body></html>`)
     pw.document.close()
   }
 
@@ -997,18 +1012,18 @@ function App() {
                   </>
                 )}
 
-                {/* BARCODE CODE128 */}
                 {settings.showQRCode && settings.qrCodeData && (
-                  <div className="s-barcode">
-                    <QRCode
+                  <div className="s-barcode" style={{ textAlign: 'center', border: settings.qrCodeBorder ? `${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor}` : 'none', borderRadius: '4px', padding: `${settings.qrCodeFrameWidth}px`, margin: '8px 0', background: settings.qrCodeBgColor, display: 'inline-block', maxWidth: '100%' }}>
+                    <QRCodeSVG
                       value={settings.qrCodeData}
                       size={settings.qrCodeSize}
                       fgColor={settings.qrCodeFgColor}
                       bgColor={settings.qrCodeBgColor}
                       level={settings.qrCodeLevel}
                       includeMargin={true}
+                      style={{ display: 'block', margin: '0 auto', maxWidth: '100%' }}
                     />
-                    <div className="s-btext" style={{ fontSize: '10px', marginTop: '4px', color: '#888' }}>Scan untuk info</div>
+                    <div className="s-btext" style={{ fontSize: '10px', marginTop: '4px', color: '#888', textAlign: 'center' }}>Scan untuk info</div>
                   </div>
                 )}
 
@@ -1108,35 +1123,58 @@ function App() {
                       </div>
                       <span className="hint">Data yang akan di-encode ke QR Code</span>
                     </div>
-                    <div className="fg">
-                      <label>Ukuran QR Code (px)</label>
-                      <select value={settings.qrCodeSize} onChange={e => setSettings({...settings, qrCodeSize: Number(e.target.value)})}>
-                        <option value={120}>120 px - Kecil</option>
-                        <option value={140}>140 px</option>
-                        <option value={160}>160 px - Sedang</option>
-                        <option value={180}>180 px</option>
-                        <option value={200}>200 px - Besar</option>
-                      </select>
-                    </div>
-                    <div className="fg">
-                      <label>Warna QR Code</label>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <input type="color" value={settings.qrCodeFgColor} onChange={e => setSettings({...settings, qrCodeFgColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
-                        <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Foreground</span>
-                        <input type="color" value={settings.qrCodeBgColor} onChange={e => setSettings({...settings, qrCodeBgColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
-                        <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Background</span>
-                      </div>
-                    </div>
-                    <div className="fg">
-                      <label>Level Koreksi Error</label>
-                      <select value={settings.qrCodeLevel} onChange={e => setSettings({...settings, qrCodeLevel: e.target.value})}>
-                        <option value="L">L - Rendah (7%)</option>
-                        <option value="M">M - Sedang (15%)</option>
-                        <option value="Q">Q - Tinggi (25%)</option>
-                        <option value="H">H - Sangat Tinggi (30%)</option>
-                      </select>
-                      <span className="hint">Semakin tinggi, semakin tahan terhadap kerusakan</span>
-                    </div>
+                <div className="fg">
+                  <label>Ukuran QR Code (px)</label>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input type="number" min="80" max="400" value={settings.qrCodeSize} onChange={e => setSettings({...settings, qrCodeSize: Math.max(80, Math.min(400, Number(e.target.value)))})} style={{ width: '70px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} />
+                    <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>px</span>
+                  </div>
+                  <span className="hint">Semakin besar semakin rapat modulnya</span>
+                </div>
+                <div className="fg">
+                  <label>Frame / Bingkai QR</label>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <label className="cb">
+                      <input type="checkbox" checked={settings.qrCodeBorder} onChange={e => setSettings({...settings, qrCodeBorder: e.target.checked})} />
+                      <span className="cb-box"></span>
+                      Tampilkan Bingkai
+                    </label>
+                    {settings.qrCodeBorder && (
+                      <>
+                        <input type="number" min="0" max="10" value={settings.qrCodeBorderWidth} onChange={e => setSettings({...settings, qrCodeBorderWidth: Math.max(0, Math.min(10, Number(e.target.value)))})} style={{ width: '50px', padding: '6px 8px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '12px', outline: 'none' }} />
+                        <input type="color" value={settings.qrCodeBorderColor} onChange={e => setSettings({...settings, qrCodeBorderColor: e.target.value})} style={{ width: '30px', height: '28px', padding: '1px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="fg">
+                  <label>Lebar Frame (px)</label>
+                  <select value={settings.qrCodeFrameWidth} onChange={e => setSettings({...settings, qrCodeFrameWidth: Number(e.target.value)})}>
+                    <option value={2}>2 - Ketat</option>
+                    <option value={4}>4 - Normal</option>
+                    <option value={6}>6 - Lebar</option>
+                    <option value={8}>8 - Sangat Lebar</option>
+                  </select>
+                </div>
+                <div className="fg">
+                  <label>Warna QR Code</label>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input type="color" value={settings.qrCodeFgColor} onChange={e => setSettings({...settings, qrCodeFgColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
+                    <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Foreground</span>
+                    <input type="color" value={settings.qrCodeBgColor} onChange={e => setSettings({...settings, qrCodeBgColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
+                    <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Background</span>
+                  </div>
+                </div>
+                <div className="fg">
+                  <label>Level Koreksi Error</label>
+                  <select value={settings.qrCodeLevel} onChange={e => setSettings({...settings, qrCodeLevel: e.target.value})}>
+                    <option value="L">L - Rendah (7%)</option>
+                    <option value="M">M - Sedang (15%)</option>
+                    <option value="Q">Q - Tinggi (25%)</option>
+                    <option value="H">H - Sangat Tinggi (30%)</option>
+                  </select>
+                  <span className="hint">Semakin tinggi, semakin tahan terhadap kerusakan</span>
+                </div>
                   </>
                 )}
                 <div className="fg">
