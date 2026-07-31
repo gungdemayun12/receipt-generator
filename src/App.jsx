@@ -949,10 +949,11 @@ function App() {
                   )}
                   <div className="s-namatoko">{header.storeName || 'TOKO ANDA'}</div>
                   <div className="s-alamat">{header.storeAddress}</div>
-                  {header.storePhone && <div>Telp: {header.storePhone}</div>}
+                  {header.storePhone && <div>No. Telp {header.storePhone}</div>}
                   {header.storePhone2 && <div>HP: {header.storePhone2}</div>}
                   {header.storeEmail && <div>Email: {header.storeEmail}</div>}
                   {header.storeWebsite && <div>Web: {header.storeWebsite}</div>}
+                  {header.receiptNumber && <div style={{ marginTop: '2px' }}>{header.receiptNumber}</div>}
                 </div>
 
                 <div className={`s-sep ${settings.borderStyle}`}></div>
@@ -961,69 +962,43 @@ function App() {
                 {header.receiptTitle && <div className="s-judul">{header.receiptTitle}</div>}
 
                 {/* INFO TRANSAKSI */}
-                <div className="s-info">
-                  {header.receiptNumber && (
-                    <div className="s-dotrow"><span className="s-lb">No</span><span className="s-dots"></span><span className="s-val">{header.receiptNumber}</span></div>
-                  )}
-                  {header.date && (() => {
-                    const d = new Date(header.date)
-                    const dateStr = d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })
-                    const timeStr = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-                    return (
-                      <>
-                        <div className="s-dotrow"><span className="s-lb">Tgl</span><span className="s-dots"></span><span className="s-val">{dateStr}</span></div>
-                        <div className="s-dotrow"><span className="s-lb">Jam</span><span className="s-dots"></span><span className="s-val">{timeStr}</span></div>
-                      </>
-                    )
-                  })()}
-                  {header.cashier && settings.showCashier && (
-                    <div className="s-dotrow"><span className="s-lb">Kasir</span><span className="s-dots"></span><span className="s-val">{header.cashier}</span></div>
-                  )}
-                  {header.customer && settings.showCustomer && (
-                    <div className="s-dotrow"><span className="s-lb">Cust</span><span className="s-dots"></span><span className="s-val">{header.customer}</span></div>
-                  )}
-                  {header.customerAddress && settings.showCustomer && (
-                    <div className="s-dotrow"><span className="s-lb">Almt</span><span className="s-dots"></span><span className="s-val">{header.customerAddress}</span></div>
-                  )}
-                  {header.customerPhone && settings.showCustomer && (
-                    <div className="s-dotrow"><span className="s-lb">HP</span><span className="s-dots"></span><span className="s-val">{header.customerPhone}</span></div>
-                  )}
-                  {header.customFields.map(cf => (
-                    cf.label && cf.value && (
-                      <div className="s-dotrow" key={cf.id}>
-                        <span className="s-lb">{cf.label}</span>
-                        <span className="s-dots"></span>
-                        <span className="s-val">{cf.value}</span>
-                      </div>
-                    )
-                  ))}
-                  {header.note && (
-                    <div className="s-note"><i>{header.note.split('\n').map((l, i) => <div key={i}>{l}</div>)}</i></div>
-                  )}
+                <div className="s-info" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.95em' }}>
+                  <div className="s-info-col" style={{ textAlign: 'left' }}>
+                    {header.date && (() => {
+                      const d = new Date(header.date)
+                      const dateStr = d.toLocaleDateString('sv-SE') // YYYY-MM-DD format roughly matches 2023-08-02
+                      const timeStr = d.toLocaleTimeString('en-GB') // HH:MM:SS format
+                      return (
+                        <>
+                          <div>{dateStr}</div>
+                          <div>{timeStr}</div>
+                        </>
+                      )
+                    })()}
+                    {header.customFields.map(cf => (
+                      cf.label && cf.value && <div key={cf.id}>{cf.label} {cf.value}</div>
+                    ))}
+                  </div>
+                  <div className="s-info-col" style={{ textAlign: 'right' }}>
+                    {header.cashier && settings.showCashier && <div>{header.cashier}</div>}
+                    {header.customer && settings.showCustomer && <div>{header.customer}</div>}
+                    {header.customerAddress && settings.showCustomer && <div>{header.customerAddress}</div>}
+                    {header.customerPhone && settings.showCustomer && <div>{header.customerPhone}</div>}
+                  </div>
                 </div>
 
                 <div className={`s-sep ${settings.borderStyle}`}></div>
 
-                {/* HEADER ITEMS */}
-                <div className="s-items-h">
-                  <span className="s-cn">Barang</span>
-                  <span className="s-cq">Qty</span>
-                  <span className="s-ch">Harga</span>
-                  <span className="s-cs">Sub</span>
-                </div>
-
                 {/* ITEMS */}
                 {items.map((item, i) => (
-                  <div className="s-item" key={i}>
+                  <div className="s-item" key={i} style={{ padding: '4px 0', borderBottom: 'none' }}>
                     {item.name ? (
                       <>
-                        <div className="s-item-r">
-                          <span className="s-cn">{item.name}</span>
-                          <span className="s-cq">{item.qty}</span>
-                          <span className="s-ch">{fmt(item.price)}</span>
-                          <span className="s-cs">{fmt(item.qty * item.price)}</span>
+                        <div className="s-item-name" style={{ fontWeight: 'bold' }}>{i + 1}. {item.name}</div>
+                        <div className="s-item-details" style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
+                          <span>{item.qty} {item.unit !== 'Pcs' && item.unit !== '' ? item.unit + ' ' : ''}x {fmt(item.price).replace('Rp', '')}</span>
+                          <span>{fmt(item.qty * item.price)}</span>
                         </div>
-                        <div className="s-unit">({item.unit})</div>
                       </>
                     ) : (
                       <div className="s-empty">(kosong)</div>
@@ -1033,29 +1008,30 @@ function App() {
 
                 <div className="s-sep-thin"></div>
 
+                <div style={{ padding: '4px 0', marginBottom: '4px' }}>
+                  Total QTY : {items.reduce((acc, curr) => acc + (Number(curr.qty) || 0), 0)}
+                </div>
+
                 {/* TOTAL */}
-                <div className="s-total-r"><span>Subtotal</span><span>{fmt(subtotal)}</span></div>
+                <div className="s-total-r"><span>Sub Total</span><span>{fmt(subtotal)}</span></div>
                 {discVal > 0 && <div className="s-total-r merah"><span>{discountType === 'percent' ? `Diskon (${discount}%)` : 'Diskon'}</span><span className="s-minus">-{fmt(discVal)}</span></div>}
                 {taxVal > 0 && <div className="s-total-r"><span>{taxType === 'percent' ? `Pajak (${tax}%)` : 'Pajak'}</span><span>{fmt(taxVal)}</span></div>}
 
-                <div className={`s-sep ${settings.borderStyle}`}></div>
-
-                <div className="s-grand">
-                  <span>TOTAL</span>
+                <div className="s-grand" style={{ fontSize: '1.2em', margin: '2px 0' }}>
+                  <span>Total</span>
                   <span>{fmt(total)}</span>
                 </div>
-
-                <div className="s-sep-thin"></div>
 
                 {/* PEMBAYARAN */}
                 {payment > 0 && (
                   <>
-                    <div className="s-total-r"><span>Total Bayar</span><span>{fmt(total)}</span></div>
-                    {settings.showPaymentMethod && <div className="s-total-r"><span>Metode</span><span>{paymentMethod}</span></div>}
-                    <div className="s-total-r"><span>Bayar</span><span>{fmt(payment)}</span></div>
-                    {settings.showChange && <div className="s-total-r bold"><span>Kembali</span><span>{fmt(change)}</span></div>}
-                    <div className="s-sep-thin"></div>
+                    <div className="s-total-r"><span>Bayar {settings.showPaymentMethod ? `(${paymentMethod})` : '(Cash)'}</span><span>{fmt(payment)}</span></div>
+                    {settings.showChange && <div className="s-total-r"><span>Kembali</span><span>{fmt(change)}</span></div>}
                   </>
+                )}
+
+                {header.note && (
+                  <div className="s-note" style={{ marginTop: '12px' }}><i>{header.note.split('\n').map((l, i) => <div key={i}>{l}</div>)}</i></div>
                 )}
 
                  {settings.showQRCode && settings.qrCodeData && (
