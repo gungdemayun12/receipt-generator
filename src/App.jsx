@@ -373,7 +373,7 @@ function App() {
     if (header.receiptNumber) h += dots('No', header.receiptNumber) + '<br>'
     if (header.date) {
       const d = new Date(header.date)
-      const ds = d.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+       const ds = d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })
       const ts = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
       h += dots('Tgl', ds) + '<br>'
       h += dots('Jam', ts) + '<br>'
@@ -526,7 +526,7 @@ function App() {
     if (header.receiptNumber) p.push(...enc.encode('No\t: ' + header.receiptNumber + '\n'))
     if (header.date) {
       const d = new Date(header.date)
-      p.push(...enc.encode('Tgl\t: ' + d.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + '\n'))
+       p.push(...enc.encode('Tgl\t: ' + d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) + '\n'))
       p.push(...enc.encode('Jam\t: ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + '\n'))
     }
     if (header.cashier && settings.showCashier) p.push(...enc.encode('Kasir\t: ' + header.cashier + '\n'))
@@ -930,7 +930,7 @@ function App() {
                   )}
                   {header.date && (() => {
                     const d = new Date(header.date)
-                    const dateStr = d.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                    const dateStr = d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })
                     const timeStr = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
                     return (
                       <>
@@ -1012,8 +1012,8 @@ function App() {
                   </>
                 )}
 
-                {settings.showQRCode && settings.qrCodeData && (
-                  <div className="s-barcode" style={{ textAlign: 'center', border: settings.qrCodeBorder ? `${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor}` : 'none', borderRadius: '4px', padding: `${settings.qrCodeFrameWidth}px`, margin: '8px 0', background: settings.qrCodeBgColor, display: 'inline-block', maxWidth: '100%' }}>
+                 {settings.showQRCode && settings.qrCodeData && (
+                   <div className="s-barcode" style={{ textAlign: 'center', border: settings.qrCodeBorder ? `${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor}` : 'none', borderRadius: '4px', padding: `${settings.qrCodeFrameWidth}px`, margin: '8px auto', background: settings.qrCodeBgColor, maxWidth: '100%' }}>
                     <QRCodeSVG
                       value={settings.qrCodeData}
                       size={settings.qrCodeSize}
