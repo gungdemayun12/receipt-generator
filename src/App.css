@@ -518,17 +518,19 @@ main {
 .s-header { margin-bottom: 4px; }
 .s-namatoko { font-size: 2em; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
 .s-alamat { font-size: 1em; white-space: pre-line; }
-.s-sep { margin: 4px 0; letter-spacing: 2px; overflow: hidden; white-space: nowrap; }
+.s-sep { width: 100%; border-bottom: 2px dashed black; margin: 6px 0; }
+.s-sep.equals { border-bottom-style: double; border-width: 3px; }
+.s-sep.stars { border-bottom-style: dotted; border-width: 2px; }
 .s-judul { text-align: center; font-size: 1.4em; font-weight: bold; margin: 4px 0; }
 .s-info { font-size: 1em; }
-.s-dotrow { display: flex; align-items: baseline; }
-.s-dots { color: #999; letter-spacing: 1px; }
-.s-items-h { display: flex; font-weight: bold; font-size: 1em; border-bottom: 1px solid #333; padding: 2px 0; margin-bottom: 2px; }
+.s-dotrow { display: flex; align-items: baseline; justify-content: space-between; }
+.s-dots { flex-grow: 1; border-bottom: 2px dotted #999; margin: 0 4px; position: relative; top: -4px; }
+.s-items-h { display: flex; font-weight: bold; font-size: 1em; border-bottom: 1px solid #333; padding: 4px 0; margin-bottom: 2px; }
 .s-cn { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.s-cq { width: 32px; text-align: center; flex-shrink: 0; }
-.s-ch { width: 80px; text-align: right; flex-shrink: 0; }
-.s-cs { width: 80px; text-align: right; flex-shrink: 0; }
-.s-item { border-bottom: 1px dashed #ddd; padding: 2px 0; }
+.s-cq { width: 36px; text-align: center; flex-shrink: 0; }
+.s-ch { width: 85px; text-align: right; flex-shrink: 0; }
+.s-cs { width: 85px; text-align: right; flex-shrink: 0; }
+.s-item { padding: 4px 0; }
 .s-item-r { display: flex; }
 .s-unit { color: #888; font-size: 0.9em; padding-left: 4px; }
 .s-empty { color: #ccc; font-style: italic; }
@@ -537,7 +539,7 @@ main {
 .s-note { margin-top: 4px; font-size: 0.9em; color: #555; padding: 2px 0; }
 .s-logo { font-size: 2.5em; font-weight: bold; letter-spacing: 3px; margin-bottom: 4px; }
 .s-end-sub { text-align: center; font-size: 0.85em; color: #888; margin-top: 2px; }
-.s-sep-thin { margin: 4px 0; letter-spacing: 2px; overflow: hidden; white-space: nowrap; color: #999; }
+.s-sep-thin { width: 100%; border-bottom: 1px dashed #777; margin: 4px 0; }
 .s-minus { color: #c0392b; }
 .bold { font-weight: bold; }
 .req { color: var(--danger); }

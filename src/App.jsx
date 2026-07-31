@@ -929,7 +929,7 @@ function App() {
             {/* STRUK PREVIEW */}
             <div className="prev-wrap">
               <div className={`struk ${settings.receiptLayout}`} style={{
-                width: settings.paperSize === 58 ? '280px' : '420px',
+                width: '280px',
                 fontFamily: settings.fontFamily,
                 color: settings.fontColor,
                 fontSize: settings.fontSize + 'px',
@@ -954,7 +954,7 @@ function App() {
                   {header.storeWebsite && <div>Web: {header.storeWebsite}</div>}
                 </div>
 
-                <div className="s-sep">{getBorderChar().repeat(settings.charPerLine)}</div>
+                <div className={`s-sep ${settings.borderStyle}`}></div>
 
                 {/* JUDUL */}
                 {header.receiptTitle && <div className="s-judul">{header.receiptTitle}</div>}
@@ -962,7 +962,7 @@ function App() {
                 {/* INFO TRANSAKSI */}
                 <div className="s-info">
                   {header.receiptNumber && (
-                    <div className="s-dotrow"><span className="s-lb">No</span><span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - 3 - header.receiptNumber.length))}</span><span className="s-val">{header.receiptNumber}</span></div>
+                    <div className="s-dotrow"><span className="s-lb">No</span><span className="s-dots"></span><span className="s-val">{header.receiptNumber}</span></div>
                   )}
                   {header.date && (() => {
                     const d = new Date(header.date)
@@ -970,28 +970,28 @@ function App() {
                     const timeStr = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
                     return (
                       <>
-                        <div className="s-dotrow"><span className="s-lb">Tgl</span><span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - 3 - dateStr.length))}</span><span className="s-val">{dateStr}</span></div>
-                        <div className="s-dotrow"><span className="s-lb">Jam</span><span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - 3 - timeStr.length))}</span><span className="s-val">{timeStr}</span></div>
+                        <div className="s-dotrow"><span className="s-lb">Tgl</span><span className="s-dots"></span><span className="s-val">{dateStr}</span></div>
+                        <div className="s-dotrow"><span className="s-lb">Jam</span><span className="s-dots"></span><span className="s-val">{timeStr}</span></div>
                       </>
                     )
                   })()}
                   {header.cashier && settings.showCashier && (
-                    <div className="s-dotrow"><span className="s-lb">Kasir</span><span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - 6 - header.cashier.length))}</span><span className="s-val">{header.cashier}</span></div>
+                    <div className="s-dotrow"><span className="s-lb">Kasir</span><span className="s-dots"></span><span className="s-val">{header.cashier}</span></div>
                   )}
                   {header.customer && settings.showCustomer && (
-                    <div className="s-dotrow"><span className="s-lb">Cust</span><span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - 5 - header.customer.length))}</span><span className="s-val">{header.customer}</span></div>
+                    <div className="s-dotrow"><span className="s-lb">Cust</span><span className="s-dots"></span><span className="s-val">{header.customer}</span></div>
                   )}
                   {header.customerAddress && settings.showCustomer && (
-                    <div className="s-dotrow"><span className="s-lb">Almt</span><span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - 5 - header.customerAddress.length))}</span><span className="s-val">{header.customerAddress}</span></div>
+                    <div className="s-dotrow"><span className="s-lb">Almt</span><span className="s-dots"></span><span className="s-val">{header.customerAddress}</span></div>
                   )}
                   {header.customerPhone && settings.showCustomer && (
-                    <div className="s-dotrow"><span className="s-lb">HP</span><span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - 3 - header.customerPhone.length))}</span><span className="s-val">{header.customerPhone}</span></div>
+                    <div className="s-dotrow"><span className="s-lb">HP</span><span className="s-dots"></span><span className="s-val">{header.customerPhone}</span></div>
                   )}
                   {header.customFields.map(cf => (
                     cf.label && cf.value && (
                       <div className="s-dotrow" key={cf.id}>
                         <span className="s-lb">{cf.label}</span>
-                        <span className="s-dots">{'.'.repeat(Math.max(2, settings.charPerLine - cf.label.length - cf.value.length))}</span>
+                        <span className="s-dots"></span>
                         <span className="s-val">{cf.value}</span>
                       </div>
                     )
@@ -1001,7 +1001,7 @@ function App() {
                   )}
                 </div>
 
-                <div className="s-sep">{getBorderChar().repeat(settings.charPerLine)}</div>
+                <div className={`s-sep ${settings.borderStyle}`}></div>
 
                 {/* HEADER ITEMS */}
                 <div className="s-items-h">
@@ -1030,21 +1030,21 @@ function App() {
                   </div>
                 ))}
 
-                <div className="s-sep-thin">{'-'.repeat(settings.charPerLine)}</div>
+                <div className="s-sep-thin"></div>
 
                 {/* TOTAL */}
                 <div className="s-total-r"><span>Subtotal</span><span>{fmt(subtotal)}</span></div>
                 {discVal > 0 && <div className="s-total-r merah"><span>{discountType === 'percent' ? `Diskon (${discount}%)` : 'Diskon'}</span><span className="s-minus">-{fmt(discVal)}</span></div>}
                 {taxVal > 0 && <div className="s-total-r"><span>{taxType === 'percent' ? `Pajak (${tax}%)` : 'Pajak'}</span><span>{fmt(taxVal)}</span></div>}
 
-                <div className="s-sep">{getBorderChar().repeat(settings.charPerLine)}</div>
+                <div className={`s-sep ${settings.borderStyle}`}></div>
 
                 <div className="s-grand">
                   <span>TOTAL</span>
                   <span>{fmt(total)}</span>
                 </div>
 
-                <div className="s-sep-thin">{'-'.repeat(settings.charPerLine)}</div>
+                <div className="s-sep-thin"></div>
 
                 {/* PEMBAYARAN */}
                 {payment > 0 && (
@@ -1053,7 +1053,7 @@ function App() {
                     {settings.showPaymentMethod && <div className="s-total-r"><span>Metode</span><span>{paymentMethod}</span></div>}
                     <div className="s-total-r"><span>Bayar</span><span>{fmt(payment)}</span></div>
                     {settings.showChange && <div className="s-total-r bold"><span>Kembali</span><span>{fmt(change)}</span></div>}
-                    <div className="s-sep-thin">{'-'.repeat(settings.charPerLine)}</div>
+                    <div className="s-sep-thin"></div>
                   </>
                 )}
 
@@ -1074,9 +1074,9 @@ function App() {
                 {/* FOOTER */}
                 {header.footer && (
                   <div className="s-footer">
-                    <div className="s-sep">{getBorderChar().repeat(settings.charPerLine)}</div>
+                    <div className={`s-sep ${settings.borderStyle}`}></div>
                     <div style={{ textAlign: 'center', lineHeight: '1.6' }}>
-                      {header.footer.split('\n').map((l, i) => <div key={i}>{l || '\u00A0'.repeat(settings.charPerLine)}</div>)}
+                      {header.footer.split('\n').map((l, i) => <div key={i}>{l || '\u00A0'}</div>)}
                     </div>
                   </div>
                 )}
@@ -1111,13 +1111,7 @@ function App() {
                   </select>
                   <span className="hint">Pilih gaya tampilan struk yang Anda inginkan. Lihat perubahannya di tab Preview.</span>
                 </div>
-                <div className="fg">
-                  <label>Ukuran Kertas</label>
-                  <select value={settings.paperSize} onChange={e => setSettings({...settings, paperSize: Number(e.target.value)})}>
-                    <option value={58}>58 mm (Struk Kecil)</option>
-                    <option value={80}>80 mm (Struk Besar)</option>
-                  </select>
-                </div>
+                {/* PAPER SIZE OPTION REMOVED */}
                 <div className="fg">
                   <label>Jenis Font</label>
                   <select value={settings.fontFamily} onChange={e => setSettings({...settings, fontFamily: e.target.value})}>
