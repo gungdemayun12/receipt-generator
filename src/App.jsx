@@ -176,7 +176,7 @@ function App() {
     }
 
     const borderRadius = getLogoBorderRadius()
-    const border = settings.logoBorderWidth > 0 ? `${settings.logoBorderWidth}px ${settings.logoBorderStyle} ${settings.logoBorderColor}` : 'none'
+    const border = settings.logoBorderWidth > 0 && settings.logoBorderStyle !== 'none' ? `${settings.logoBorderWidth}px ${settings.logoBorderStyle} ${settings.logoBorderColor}` : 'none'
     const bg = settings.logoBgColor === 'transparent' ? 'transparent' : settings.logoBgColor
 
     return {
@@ -686,6 +686,7 @@ function App() {
                         <input type="number" min="0" max="15" value={settings.logoBorderWidth} onChange={e => setSettings({...settings, logoBorderWidth: Math.max(0, Math.min(15, Number(e.target.value)))})} style={{ width: '60px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="0" />
                         <input type="color" value={settings.logoBorderColor} onChange={e => setSettings({...settings, logoBorderColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
                         <select value={settings.logoBorderStyle} onChange={e => setSettings({...settings, logoBorderStyle: e.target.value})} style={{ padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none', flex: 1 }}>
+                          <option value="none">Tanpa Garis</option>
                           <option value="solid">Garis Penuh</option>
                           <option value="dashed">Garis Putus-putus</option>
                           <option value="dotted">Titik-titik</option>
@@ -1326,6 +1327,7 @@ function App() {
                         <input type="number" min="0" max="15" value={settings.logoBorderWidth} onChange={e => setSettings({...settings, logoBorderWidth: Math.max(0, Math.min(15, Number(e.target.value)))})} style={{ width: '60px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="0" />
                         <input type="color" value={settings.logoBorderColor} onChange={e => setSettings({...settings, logoBorderColor: e.target.value})} style={{ width: '36px', height: '34px', padding: '2px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', cursor: 'pointer' }} />
                         <select value={settings.logoBorderStyle} onChange={e => setSettings({...settings, logoBorderStyle: e.target.value})} style={{ padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none', flex: 1 }}>
+                          <option value="none">Tanpa Garis</option>
                           <option value="solid">Penuh</option>
                           <option value="dashed">Putus-putus</option>
                           <option value="dotted">Titik</option>
