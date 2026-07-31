@@ -100,7 +100,7 @@ function App() {
     qrCodeFgColor: '#000000',
     qrCodeBgColor: '#ffffff',
     qrCodeLevel: 'M',
-    qrCodeBorder: true,
+    qrCodeBorder: false,
     qrCodeBorderWidth: 2,
     qrCodeBorderColor: '#000000',
     qrCodeFrameWidth: 4,
@@ -261,7 +261,7 @@ function App() {
     setDiscount(0); setDiscountType('nominal')
     setTax(0); setTaxType('percent')
     setPayment(0); setPaymentMethod('Tunai')
-    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: true, qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: true, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
+    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: true, qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: false, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
     setLogoImage('')
     nextId.current = 2
     setShowReset(false)
@@ -1023,7 +1023,6 @@ function App() {
                       includeMargin={true}
                       style={{ display: 'block', margin: '0 auto', maxWidth: '100%' }}
                     />
-                    <div className="s-btext" style={{ fontSize: '10px', marginTop: '4px', color: '#888', textAlign: 'center' }}>Scan untuk info</div>
                   </div>
                 )}
 
