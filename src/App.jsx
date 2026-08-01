@@ -465,19 +465,19 @@ function App() {
     h += `<div style="font-size:${fs*0.95}px;">`
     h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>Subtotal</span><span>${fmt(subtotal).replace('Rp', '')}</span></div>`
     if (discVal > 0) {
-      const label = discountType === 'percent' ? `Diskon (${discount}%)` : 'Diskon'
+      const label = discountType === 'percent' ? `Discount (${discount}%)` : 'Discount'
       h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>${label}</span><span>-${fmt(discVal).replace('Rp', '')}</span></div>`
     }
     if (taxVal > 0) {
-      const label = taxType === 'percent' ? `Pajak (${tax}%)` : 'Pajak'
+      const label = taxType === 'percent' ? `Tax (${tax}%)` : 'Tax'
       h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>${label}</span><span>${fmt(taxVal).replace('Rp', '')}</span></div>`
     }
     h += `<div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:bold;"><span>Total</span><span>${fmt(total).replace('Rp', '')}</span></div>`
     if (payment > 0) {
-      const payLabel = paymentMethod === 'Tunai' ? 'TUNAI' : paymentMethod.toUpperCase()
+      const payLabel = paymentMethod === 'Tunai' ? 'CASH' : paymentMethod.toUpperCase()
       h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>${payLabel}</span><span>${fmt(payment).replace('Rp', '')}</span></div>`
       if (settings.showChange) {
-        h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>Kembalian</span><span>${fmt(change).replace('Rp', '')}</span></div>`
+        h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>Change</span><span>${fmt(change).replace('Rp', '')}</span></div>`
       }
     }
     h += `</div>`
@@ -508,8 +508,8 @@ function App() {
 
     // Thank You
     if (settings.showThankYou) {
-      h += `<div style="text-align:center;margin-top:8px;font-size:${fs}px;font-weight:bold;">*** TERIMA KASIH ***</div>`
-      h += `<div style="text-align:center;font-size:${fs*0.9}px;color:#888;">~ Selamat Belanja Kembali ~</div>`
+      h += `<div style="text-align:center;margin-top:8px;font-size:${fs}px;font-weight:bold;">*** THANK YOU ***</div>`
+      h += `<div style="text-align:center;font-size:${fs*0.9}px;color:#888;">~ Please Come Again ~</div>`
     }
 
     h += `</div>`
@@ -615,13 +615,13 @@ function App() {
     }
 
     totalRow('Subtotal', subtotal)
-    if (discVal > 0) totalRow(discountType === 'percent' ? `Diskon (${discount}%)` : 'Diskon', -discVal)
-    if (taxVal > 0) totalRow(taxType === 'percent' ? `Pajak (${tax}%)` : 'Pajak', taxVal)
+    if (discVal > 0) totalRow(discountType === 'percent' ? `Discount (${discount}%)` : 'Discount', -discVal)
+    if (taxVal > 0) totalRow(taxType === 'percent' ? `Tax (${tax}%)` : 'Tax', taxVal)
     totalRow('Total', total)
     if (payment > 0) {
-      const payLabel = paymentMethod === 'Tunai' ? 'TUNAI' : paymentMethod.toUpperCase()
+      const payLabel = paymentMethod === 'Tunai' ? 'CASH' : paymentMethod.toUpperCase()
       totalRow(payLabel, payment)
-      if (settings.showChange) totalRow('Kembalian', change)
+      if (settings.showChange) totalRow('Change', change)
     }
 
     p.push(...enc.encode(sep + '\n'))
@@ -637,7 +637,7 @@ function App() {
 
     if (settings.showThankYou) {
       p.push(0x1B, 0x61, 0x01)
-      p.push(...enc.encode('\n*** TERIMA KASIH ***\n~ Selamat Belanja Kembali ~\n\n'))
+      p.push(...enc.encode('\n*** THANK YOU ***\n~ Please Come Again ~\n\n'))
     }
     
     p.push(0x1D, 0x56, 0x00) // Cut paper
@@ -733,9 +733,9 @@ function App() {
                     <div className="fg">
                       <label>Ukuran Logo (px)</label>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <input type="number" min="20" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: Math.max(20, Math.min(300, Number(e.target.value)))})} style={{ width: '80px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Lebar" />
+                        <input type="number" min="20" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: e.target.value === '' ? '' : Number(e.target.value)})} style={{ width: '80px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Lebar" />
                         <span style={{ color: 'var(--text-muted)' }}>×</span>
-                        <input type="number" min="20" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: Math.max(20, Math.min(300, Number(e.target.value)))})} style={{ width: '80px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Tinggi" />
+                        <input type="number" min="20" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: e.target.value === '' ? '' : Number(e.target.value)})} style={{ width: '80px', padding: '8px 10px', background: 'var(--bg-card2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xs)', color: 'var(--text)', fontSize: '13px', outline: 'none' }} placeholder="Tinggi" />
                         <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>px</span>
                       </div>
                     </div>
@@ -1123,13 +1123,13 @@ function App() {
                 {/* TOTALS */}
                 <div style={{ fontSize: '0.9em' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>Subtotal</span><span>{fmt(subtotal).replace('Rp', '')}</span></div>
-                  {discVal > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>{discountType === 'percent' ? `Diskon (${discount}%)` : 'Diskon'}</span><span>-{fmt(discVal).replace('Rp', '')}</span></div>}
-                  {taxVal > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>{taxType === 'percent' ? `Pajak (${tax}%)` : 'Pajak'}</span><span>{fmt(taxVal).replace('Rp', '')}</span></div>}
+                  {discVal > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>{discountType === 'percent' ? `Discount (${discount}%)` : 'Discount'}</span><span>-{fmt(discVal).replace('Rp', '')}</span></div>}
+                  {taxVal > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>{taxType === 'percent' ? `Tax (${tax}%)` : 'Tax'}</span><span>{fmt(taxVal).replace('Rp', '')}</span></div>}
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0', fontWeight: 'bold' }}><span>Total</span><span>{fmt(total).replace('Rp', '')}</span></div>
                   {payment > 0 && (
                     <>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span style={{ textTransform: 'uppercase' }}>{paymentMethod === 'Tunai' ? 'TUNAI' : paymentMethod}</span><span>{fmt(payment).replace('Rp', '')}</span></div>
-                      {settings.showChange && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>Kembalian</span><span>{fmt(change).replace('Rp', '')}</span></div>}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span style={{ textTransform: 'uppercase' }}>{paymentMethod === 'Tunai' ? 'CASH' : paymentMethod}</span><span>{fmt(payment).replace('Rp', '')}</span></div>
+                      {settings.showChange && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>Change</span><span>{fmt(change).replace('Rp', '')}</span></div>}
                     </>
                   )}
                 </div>
@@ -1175,8 +1175,8 @@ function App() {
                 {/* TERIMA KASIH */}
                 {settings.showThankYou && (
                   <>
-                    <div style={{ textAlign: 'center', marginTop: '8px', fontWeight: 'bold', fontSize: '1em' }}>*** TERIMA KASIH ***</div>
-                    <div style={{ textAlign: 'center', fontSize: '0.85em', color: '#888' }}>~ Selamat Belanja Kembali ~</div>
+                    <div style={{ textAlign: 'center', marginTop: '8px', fontWeight: 'bold', fontSize: '1em' }}>*** THANK YOU ***</div>
+                    <div style={{ textAlign: 'center', fontSize: '0.85em', color: '#888' }}>~ Please Come Again ~</div>
                   </>
                 )}
               </div>
@@ -1395,9 +1395,9 @@ function App() {
                     <div className="fg">
                       <label>Ukuran Logo (px)</label>
                       <div className="input-grp">
-                        <input type="number" min="20" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: Math.max(20, Math.min(300, Number(e.target.value)))})} placeholder="L" />
+                        <input type="number" min="20" max="300" value={settings.logoWidth} onChange={e => setSettings({...settings, logoWidth: e.target.value === '' ? '' : Number(e.target.value)})} placeholder="L" />
                         <span className="input-sep">×</span>
-                        <input type="number" min="20" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: Math.max(20, Math.min(300, Number(e.target.value)))})} placeholder="T" />
+                        <input type="number" min="20" max="300" value={settings.logoHeight} onChange={e => setSettings({...settings, logoHeight: e.target.value === '' ? '' : Number(e.target.value)})} placeholder="T" />
                       </div>
                     </div>
                     <div className="fg">
