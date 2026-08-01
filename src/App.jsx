@@ -402,22 +402,32 @@ function App() {
 
     // Receipt Title
     if (header.receiptTitle) {
-      h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
+      h += `<div style="border-bottom:${settings.borderStyle === 'equals' ? '3px double' : settings.borderStyle === 'stars' ? '2px dotted' : '1px dashed'} ${color};margin:6px 0;"></div>`
       h += `<div style="text-align:center;font-size:${fs*1.1}px;font-weight:bold;margin:4px 0;">${header.receiptTitle}</div>`
     }
 
-    h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
+    h += `<div style="border-bottom:${settings.borderStyle === 'equals' ? '3px double' : settings.borderStyle === 'stars' ? '2px dotted' : '1px dashed'} ${color};margin:6px 0;"></div>`
 
-    // Transaction Info (custom fields with Label : Value)
+    // Transaction Info
     if (header.customFields && header.customFields.length > 0) {
       h += `<div style="font-size:${fs*0.95}px;margin:6px 0;">`
       header.customFields.forEach(cf => {
         if (cf.label && cf.value) {
-          h += `<div style="display:flex;"><span style="min-width:72px;">${cf.label}</span><span>: ${cf.value}</span></div>`
+          if (settings.receiptLayout === 'layout2') {
+            h += `<div style="display:flex;justify-content:space-between;"><span>${cf.label}</span><span>${cf.value}</span></div>`
+          } else {
+            h += `<div style="display:flex;"><span style="min-width:72px;">${cf.label}</span><span>: ${cf.value}</span></div>`
+          }
         }
       })
       h += `</div>`
-      h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
+      h += `<div style="border-bottom:${settings.borderStyle === 'equals' ? '3px double' : settings.borderStyle === 'stars' ? '2px dotted' : '1px dashed'} ${color};margin:6px 0;"></div>`
+    }
+
+    // Items Header for Layout 2
+    if (settings.receiptLayout === 'layout2') {
+      h += `<div style="display:flex;font-weight:bold;font-size:${fs*0.9}px;border-bottom:1px solid ${color};margin-bottom:4px;padding-bottom:2px;">`
+      h += `<span style="flex:1;">Item</span><span style="width:40px;text-align:center;">Qty</span><span style="width:70px;text-align:right;">Total</span></div>`
     }
 
     // Items
@@ -425,14 +435,30 @@ function App() {
       if (!item.name) return
       const sub = item.qty * item.price
       h += `<div style="padding:2px 0;font-size:${fs*0.95}px;">`
-      h += `<div>${item.name}</div>`
-      h += `<div style="display:flex;justify-content:space-between;padding-left:8px;">`
-      h += `<span>${item.qty} x ${fmt(item.price).replace('Rp', '')}</span>`
-      h += `<span>${fmt(sub).replace('Rp', '')}</span>`
-      h += `</div></div>`
+      
+      if (settings.receiptLayout === 'layout2') {
+        h += `<div style="display:flex;">`
+        h += `<span style="flex:1;padding-right:4px;">${item.name}</span>`
+        h += `<span style="width:40px;text-align:center;">${item.qty}</span>`
+        h += `<span style="width:70px;text-align:right;">${fmt(sub).replace('Rp', '')}</span>`
+        h += `</div>`
+      } else if (settings.receiptLayout === 'layout3') {
+        h += `<div style="display:flex;justify-content:space-between;">`
+        h += `<span>${item.qty}x ${item.name}</span>`
+        h += `<span>${fmt(sub).replace('Rp', '')}</span>`
+        h += `</div>`
+      } else {
+        // Layout 1 (Classic)
+        h += `<div>${item.name}</div>`
+        h += `<div style="display:flex;justify-content:space-between;padding-left:8px;">`
+        h += `<span>${item.qty} x ${fmt(item.price).replace('Rp', '')}</span>`
+        h += `<span>${fmt(sub).replace('Rp', '')}</span>`
+        h += `</div>`
+      }
+      h += `</div>`
     })
 
-    h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
+    h += `<div style="border-bottom:${settings.borderStyle === 'equals' ? '3px double' : settings.borderStyle === 'stars' ? '2px dotted' : '1px dashed'} ${color};margin:6px 0;"></div>`
 
     // Totals
     h += `<div style="font-size:${fs*0.95}px;">`
@@ -455,7 +481,7 @@ function App() {
     }
     h += `</div>`
 
-    h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
+    h += `<div style="border-bottom:${settings.borderStyle === 'equals' ? '3px double' : settings.borderStyle === 'stars' ? '2px dotted' : '1px dashed'} ${color};margin:6px 0;"></div>`
 
     // QR Code
     if (qrSVG) {
@@ -1016,48 +1042,79 @@ function App() {
                 {/* RECEIPT TITLE */}
                 {header.receiptTitle && (
                   <>
-                    <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
+                    <div style={{ borderBottom: settings.borderStyle === 'equals' ? '3px double currentColor' : settings.borderStyle === 'stars' ? '2px dotted currentColor' : '1px dashed currentColor', margin: '6px 0' }}></div>
                     <div style={{ textAlign: 'center', fontSize: '1.1em', fontWeight: 'bold', margin: '4px 0' }}>{header.receiptTitle}</div>
                   </>
                 )}
 
-                <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
+                <div style={{ borderBottom: settings.borderStyle === 'equals' ? '3px double currentColor' : settings.borderStyle === 'stars' ? '2px dotted currentColor' : '1px dashed currentColor', margin: '6px 0' }}></div>
 
-                {/* TRANSACTION INFO (Custom Fields as Label : Value) */}
+                {/* TRANSACTION INFO */}
                 {header.customFields && header.customFields.length > 0 && (
                   <>
                     <div style={{ fontSize: '0.9em', margin: '6px 0' }}>
                       {header.customFields.map(cf => (
                         cf.label && cf.value && (
-                          <div key={cf.id} style={{ display: 'flex' }}>
-                            <span style={{ minWidth: '72px' }}>{cf.label}</span>
-                            <span>: {cf.value}</span>
+                          <div key={cf.id} style={{ display: 'flex', justifyContent: settings.receiptLayout === 'layout2' ? 'space-between' : 'flex-start' }}>
+                            {settings.receiptLayout === 'layout2' ? (
+                              <>
+                                <span>{cf.label}</span>
+                                <span>{cf.value}</span>
+                              </>
+                            ) : (
+                              <>
+                                <span style={{ minWidth: '72px' }}>{cf.label}</span>
+                                <span>: {cf.value}</span>
+                              </>
+                            )}
                           </div>
                         )
                       ))}
                     </div>
-                    <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
+                    <div style={{ borderBottom: settings.borderStyle === 'equals' ? '3px double currentColor' : settings.borderStyle === 'stars' ? '2px dotted currentColor' : '1px dashed currentColor', margin: '6px 0' }}></div>
                   </>
+                )}
+
+                {/* ITEMS HEADER (Layout 2) */}
+                {settings.receiptLayout === 'layout2' && items.some(i => i.name) && (
+                  <div style={{ display: 'flex', fontWeight: 'bold', fontSize: '0.9em', borderBottom: '1px solid currentColor', marginBottom: '4px', paddingBottom: '2px' }}>
+                    <span style={{ flex: 1 }}>Item</span>
+                    <span style={{ width: '40px', textAlign: 'center' }}>Qty</span>
+                    <span style={{ width: '70px', textAlign: 'right' }}>Total</span>
+                  </div>
                 )}
 
                 {/* ITEMS */}
                 {items.map((item, i) => (
                   <div key={i} style={{ padding: '2px 0', fontSize: '0.9em' }}>
                     {item.name ? (
-                      <>
-                        <div>{item.name}</div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '8px' }}>
-                          <span>{item.qty} x {fmt(item.price).replace('Rp', '')}</span>
+                      settings.receiptLayout === 'layout2' ? (
+                        <div style={{ display: 'flex' }}>
+                          <span style={{ flex: 1, paddingRight: '4px' }}>{item.name}</span>
+                          <span style={{ width: '40px', textAlign: 'center' }}>{item.qty}</span>
+                          <span style={{ width: '70px', textAlign: 'right' }}>{fmt(item.qty * item.price).replace('Rp', '')}</span>
+                        </div>
+                      ) : settings.receiptLayout === 'layout3' ? (
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span>{item.qty}x {item.name}</span>
                           <span>{fmt(item.qty * item.price).replace('Rp', '')}</span>
                         </div>
-                      </>
+                      ) : (
+                        <>
+                          <div>{item.name}</div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '8px' }}>
+                            <span>{item.qty} x {fmt(item.price).replace('Rp', '')}</span>
+                            <span>{fmt(item.qty * item.price).replace('Rp', '')}</span>
+                          </div>
+                        </>
+                      )
                     ) : (
                       <div className="s-empty">(kosong)</div>
                     )}
                   </div>
                 ))}
 
-                <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
+                <div style={{ borderBottom: settings.borderStyle === 'equals' ? '3px double currentColor' : settings.borderStyle === 'stars' ? '2px dotted currentColor' : '1px dashed currentColor', margin: '6px 0' }}></div>
 
                 {/* TOTALS */}
                 <div style={{ fontSize: '0.9em' }}>
@@ -1073,7 +1130,7 @@ function App() {
                   )}
                 </div>
 
-                <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
+                <div style={{ borderBottom: settings.borderStyle === 'equals' ? '3px double currentColor' : settings.borderStyle === 'stars' ? '2px dotted currentColor' : '1px dashed currentColor', margin: '6px 0' }}></div>
 
                 {/* QR CODE */}
                 {settings.showQRCode && settings.qrCodeData && (
@@ -1145,17 +1202,14 @@ function App() {
                     ))}
                   </div>
                 </div>
-                <div className="fg">
-                  <label>Rata Teks Header</label>
-                  <select value={settings.align} onChange={e => setSettings({...settings, align: e.target.value})}>
-                    {ALIGN_OPTIONS.map(a => <option key={a.value} value={a.value}>{a.name}</option>)}
+                <div className="fg full">
+                  <label>Desain Tata Letak (Layout) Struk</label>
+                  <select value={settings.receiptLayout} onChange={e => setSettings({...settings, receiptLayout: e.target.value})} style={{ padding: '10px', fontSize: '14px', fontWeight: 'bold' }}>
+                    <option value="layout1">Tipe 1: Standar Klasik (Dua Baris per Item)</option>
+                    <option value="layout2">Tipe 2: Modern (Format Tabel Rata Kanan Kiri)</option>
+                    <option value="layout3">Tipe 3: Kompak (Satu Baris per Item Lebih Padat)</option>
                   </select>
-                </div>
-                <div className="fg">
-                  <label>Karakter per Baris</label>
-                  <select value={settings.charPerLine} onChange={e => setSettings({...settings, charPerLine: Number(e.target.value)})}>
-                    {CHAR_PER_LINE_OPTIONS.map(c => <option key={c} value={c}>{c} karakter</option>)}
-                  </select>
+                  <span className="hint">Pilih layout yang berbeda untuk mengubah cara item dan info ditampilkan.</span>
                 </div>
                 <div className="fg">
                   <label>Garis Pemisah</label>
