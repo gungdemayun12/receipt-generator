@@ -52,22 +52,34 @@ const ALIGN_OPTIONS = [
 
 function App() {
   const [header, setHeader] = useState({
-    storeName: 'TOKO ANDA',
-    storeAddress: 'Jl. Contoh No. 123, RT 01 RW 02, Kelurahan\nKecamatan, Kota Anda 12345',
-    storePhone: '(021) 1234-5678',
-    storePhone2: '0812-3456-7890',
-    storeEmail: 'tokoanda@email.com',
-    storeWebsite: 'www.tokoanda.com',
-    receiptTitle: 'STRUK BELANJA',
-    receiptNumber: 'INV-001',
+    storeName: 'BEEPOS',
+    storeSlogan: '',
+    storeAddress: 'Jl. Kemang Selatan I No.20\nSurabaya, 021-33335800',
+    storePhone: '021-33335800',
+    storePhone2: '',
+    storeEmail: '',
+    storeWebsite: '',
+    receiptTitle: '',
+    receiptNumber: 'JL/0022305241645/004',
     date: new Date().toISOString().slice(0, 16),
-    cashier: 'Admin',
-    customer: '',
+    cashier: 'Hafiz',
+    customer: 'CASH',
     customerAddress: '',
     customerPhone: '',
     note: '',
-    customFields: [],
-    footer: 'Terima kasih telah berbelanja di toko kami\nBarang yang sudah dibeli tidak dapat ditukar kembali\nSilakan cek kembali barang belanjaan Anda',
+    headerLine1: 'Cafe Bee',
+    headerLine2: 'Jl. Kemang Selatan I No.20',
+    headerLine3: 'Surabaya, 021-33335800',
+    customFields: [
+      { id: 1, label: 'Tanggal', value: '24-05-2023 16:45' },
+      { id: 2, label: 'Kasir', value: 'Hafiz' },
+      { id: 3, label: 'No Trx', value: 'JL/0022305241645/004' },
+      { id: 4, label: 'Member', value: 'CASH' },
+      { id: 5, label: 'Channel', value: 'Dine In' }
+    ],
+    footer: '** Supported by bee.id **',
+    footerLine2: '',
+    footerLine3: '',
   })
 
   const addCustomField = () => {
@@ -81,7 +93,10 @@ function App() {
   }
 
   const [items, setItems] = useState([
-    { id: 1, name: 'Barang 1', qty: 2, unit: 'Pcs', price: 15000 }
+    { id: 1, name: 'Bakso', qty: 2, unit: 'Pcs', price: 12000 },
+    { id: 2, name: 'Cah kangkung', qty: 3, unit: 'Pcs', price: 7500 },
+    { id: 3, name: 'Cap Jay', qty: 3, unit: 'Pcs', price: 17000 },
+    { id: 4, name: 'Cumi Goreng Tepung Gurih', qty: 3, unit: 'Pcs', price: 25000 }
   ])
 
   const [settings, setSettings] = useState({
@@ -89,7 +104,7 @@ function App() {
     fontFamily: "'Courier Prime', 'Courier New', monospace",
     fontSize: 12,
     fontColor: '#000000',
-    showQRCode: true,
+    showQRCode: false,
     align: 'center',
     charPerLine: 32,
     showCustomer: true,
@@ -97,7 +112,9 @@ function App() {
     showPaymentMethod: true,
     showChange: true,
     showThankYou: true,
-    showLogo: false,
+    showLogo: true,
+    showHeaderLines: true,
+    showTransactionInfo: true,
     logoText: '',
     logoWidth: 120,
     logoHeight: 120,
@@ -121,9 +138,9 @@ function App() {
 
   const [discount, setDiscount] = useState(0)
   const [discountType, setDiscountType] = useState('nominal')
-  const [tax, setTax] = useState(0)
+  const [tax, setTax] = useState(11)
   const [taxType, setTaxType] = useState('percent')
-  const [payment, setPayment] = useState(0)
+  const [payment, setPayment] = useState(200000)
   const [paymentMethod, setPaymentMethod] = useState('Tunai')
 
   const [tab, setTab] = useState('input')
@@ -136,7 +153,7 @@ function App() {
   const [logoImage, setLogoImage] = useState('')
 
   const logoInputRef = useRef(null)
-  const nextId = useRef(2)
+  const nextId = useRef(6)
 
   const msg = useCallback((text, type = 'success') => {
     setNotif({ text, type })
@@ -253,29 +270,42 @@ function App() {
 
   const resetAll = () => {
     setHeader({
-      storeName: 'TOKO ANDA',
-      storeAddress: 'Jl. Contoh No. 123, RT 01 RW 02, Kelurahan\nKecamatan, Kota Anda 12345',
-      storePhone: '(021) 1234-5678',
-      storePhone2: '0812-3456-7890',
-      storeEmail: 'tokoanda@email.com',
-      storeWebsite: 'www.tokoanda.com',
-      receiptTitle: 'STRUK BELANJA',
-      receiptNumber: 'INV-001',
+      storeName: 'BEEPOS',
+      storeSlogan: '',
+      storeAddress: 'Jl. Kemang Selatan I No.20\nSurabaya, 021-33335800',
+      storePhone: '021-33335800',
+      storePhone2: '',
+      storeEmail: '',
+      storeWebsite: '',
+      receiptTitle: '',
+      receiptNumber: 'JL/0022305241645/004',
       date: new Date().toISOString().slice(0, 16),
-      cashier: 'Admin',
-      customer: '',
+      cashier: 'Hafiz',
+      customer: 'CASH',
       customerAddress: '',
       customerPhone: '',
       note: '',
-      footer: 'Terima kasih telah berbelanja di toko kami\nBarang yang sudah dibeli tidak dapat ditukar kembali\nSilakan cek kembali barang belanjaan Anda',
+      headerLine1: 'Cafe Bee',
+      headerLine2: 'Jl. Kemang Selatan I No.20',
+      headerLine3: 'Surabaya, 021-33335800',
+      customFields: [
+        { id: 1, label: 'Tanggal', value: '24-05-2023 16:45' },
+        { id: 2, label: 'Kasir', value: 'Hafiz' },
+        { id: 3, label: 'No Trx', value: 'JL/0022305241645/004' },
+        { id: 4, label: 'Member', value: 'CASH' },
+        { id: 5, label: 'Channel', value: 'Dine In' }
+      ],
+      footer: '** Supported by bee.id **',
+      footerLine2: '',
+      footerLine3: '',
     })
-    setItems([{ id: 1, name: 'Barang 1', qty: 2, unit: 'Pcs', price: 15000 }])
+    setItems([{ id: 1, name: 'Bakso', qty: 2, unit: 'Pcs', price: 12000 }])
     setDiscount(0); setDiscountType('nominal')
-    setTax(0); setTaxType('percent')
-    setPayment(0); setPaymentMethod('Tunai')
-    setSettings(p => ({ ...p, showLogo: false, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: true, qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: false, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
+    setTax(11); setTaxType('percent')
+    setPayment(200000); setPaymentMethod('Tunai')
+    setSettings(p => ({ ...p, showLogo: true, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: false, qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: false, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
     setLogoImage('')
-    nextId.current = 2
+    nextId.current = 6
     setShowReset(false)
     msg('Data direset')
   }
@@ -345,131 +375,111 @@ function App() {
   // Generate HTML struk untuk print
   const genPrintHTML = (qrSVG = '') => {
     const fs = settings.fontSize
-    const cp = settings.charPerLine
     const color = settings.fontColor
     const font = settings.fontFamily
-    const w = settings.paperSize === 58 ? 280 : 420
-    const bc = getBorderChar()
-    const sep = bc.repeat(cp)
-    const thinSep = '-'.repeat(cp)
+    const w = 280
 
-    const dots = (a, b) => `${a} ${'.'.repeat(Math.max(1, cp - String(a).length - String(b).length - 1))} ${b}`
+    let h = `<div style="width:${w}px;padding:16px 12px;background:#fff;color:${color};font-family:${font};font-size:${fs}px;line-height:1.5;margin:auto;">`
 
-    let h = `<div style="width:${w}px;padding:24px 20px;background:#fff;color:${color};font-family:${font};font-size:${fs}px;line-height:1.5;margin:auto;">`
-
-    // Header Toko
-    h += `<div style="text-align:${settings.align};text-transform:uppercase;">`
+    // Logo
     if (settings.showLogo && logoImage) {
-      h += `<div style="text-align:center;margin-bottom:6px;"><div style="width:${settings.logoShape === 'circle' ? Math.max(20, Math.min(settings.logoWidth, settings.logoHeight)) : settings.logoWidth}px;height:${settings.logoShape === 'circle' ? Math.max(20, Math.min(settings.logoWidth, settings.logoHeight)) : settings.logoHeight}px;border-radius:${getLogoBorderRadius()};border:${settings.logoBorderWidth > 0 ? settings.logoBorderWidth + 'px ' + settings.logoBorderStyle + ' ' + settings.logoBorderColor : 'none'};background-color:${settings.logoBgColor};overflow:hidden;display:inline-block;line-height:0;padding:2px;box-sizing:border-box;"><img src="${logoImage}" style="width:100%;height:100%;object-fit:${settings.logoShape === 'circle' ? 'cover' : 'contain'};display:block;" /></div></div>`
+      h += `<div style="text-align:center;margin-bottom:4px;"><div style="width:${settings.logoShape === 'circle' ? Math.max(20, Math.min(settings.logoWidth, settings.logoHeight)) : settings.logoWidth}px;height:${settings.logoShape === 'circle' ? Math.max(20, Math.min(settings.logoWidth, settings.logoHeight)) : settings.logoHeight}px;border-radius:${getLogoBorderRadius()};border:${settings.logoBorderWidth > 0 ? settings.logoBorderWidth + 'px ' + settings.logoBorderStyle + ' ' + settings.logoBorderColor : 'none'};background-color:${settings.logoBgColor};overflow:hidden;display:inline-block;line-height:0;padding:2px;box-sizing:border-box;"><img src="${logoImage}" style="width:100%;height:100%;object-fit:${settings.logoShape === 'circle' ? 'cover' : 'contain'};display:block;" /></div></div>`
     } else if (settings.showLogo && settings.logoText) {
-      h += `<div style="font-size:${fs*2.5}px;font-weight:bold;letter-spacing:3px;margin-bottom:4px;">${settings.logoText}</div>`
+      h += `<div style="text-align:center;font-size:${fs*1.5}px;font-weight:bold;margin-bottom:4px;">${settings.logoText}</div>`
     }
-    h += `<div style="font-size:${fs*2}px;font-weight:bold;letter-spacing:2px;">${header.storeName}</div>`
-    h += `<div style="font-size:${fs}px;">${header.storeAddress.replace(/\n/g, '<br>')}</div>`
-    if (header.storePhone) h += `<div>Telp: ${header.storePhone}</div>`
-    if (header.storePhone2) h += `<div>HP: ${header.storePhone2}</div>`
-    if (header.storeEmail) h += `<div>Email: ${header.storeEmail}</div>`
-    if (header.storeWebsite) h += `<div>Web: ${header.storeWebsite}</div>`
+
+    // Store Name
+    if (header.storeName) {
+      h += `<div style="text-align:center;font-size:${fs*1.3}px;font-weight:bold;letter-spacing:1px;">${header.storeName}</div>`
+    }
+
+    // Header Lines (below store name)
+    h += `<div style="text-align:center;font-size:${fs*0.95}px;margin-top:2px;">`
+    if (header.headerLine1) h += `<div>${header.headerLine1}</div>`
+    if (header.headerLine2) h += `<div>${header.headerLine2}</div>`
+    if (header.headerLine3) h += `<div>${header.headerLine3}</div>`
     h += `</div>`
 
-    h += `<div style="margin:6px 0;letter-spacing:2px;text-align:center;">${sep}</div>`
-
-    // Judul Struk
+    // Receipt Title
     if (header.receiptTitle) {
-      h += `<div style="text-align:center;font-size:${fs*1.4}px;font-weight:bold;margin:4px 0;">${header.receiptTitle}</div>`
-      h += `<div style="margin:2px 0;letter-spacing:2px;text-align:center;">${thinSep}</div>`
+      h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
+      h += `<div style="text-align:center;font-size:${fs*1.1}px;font-weight:bold;margin:4px 0;">${header.receiptTitle}</div>`
     }
 
-    // Info Transaksi
-    h += `<div style="font-size:${fs}px;">`
-    if (header.receiptNumber) h += dots('No', header.receiptNumber) + '<br>'
-    if (header.date) {
-      const d = new Date(header.date)
-       const ds = d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })
-      const ts = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-      h += dots('Tgl', ds) + '<br>'
-      h += dots('Jam', ts) + '<br>'
-    }
-    if (header.cashier && settings.showCashier) h += dots('Kasir', header.cashier) + '<br>'
-    if (header.customer && settings.showCustomer) {
-      h += dots('Cust', header.customer) + '<br>'
-      if (header.customerAddress) h += dots('Almt', header.customerAddress) + '<br>'
-      if (header.customerPhone) h += dots('HP', header.customerPhone) + '<br>'
-    }
-    if (header.note) h += '<br><i>' + header.note.replace(/\n/g, '<br>') + '</i><br>'
-    h += `</div>`
+    h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
 
-    h += `<div style="margin:6px 0;letter-spacing:2px;text-align:center;">${sep}</div>`
-
-    // Header Barang
-    h += `<div style="display:flex;font-weight:bold;border-bottom:2px solid ${color};padding:4px 0;margin-bottom:2px;">`
-    h += `<span style="flex:1;">Barang</span>`
-    h += `<span style="width:32px;text-align:center;">Qty</span>`
-    h += `<span style="width:65px;text-align:right;">Harga</span>`
-    h += `<span style="width:75px;text-align:right;">Sub</span>`
-    h += `</div>`
+    // Transaction Info (custom fields with Label : Value)
+    if (header.customFields && header.customFields.length > 0) {
+      h += `<div style="font-size:${fs*0.95}px;margin:6px 0;">`
+      header.customFields.forEach(cf => {
+        if (cf.label && cf.value) {
+          h += `<div style="display:flex;"><span style="min-width:72px;">${cf.label}</span><span>: ${cf.value}</span></div>`
+        }
+      })
+      h += `</div>`
+      h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
+    }
 
     // Items
     items.forEach(item => {
       if (!item.name) return
       const sub = item.qty * item.price
-      h += `<div style="border-bottom:1px dashed #ddd;padding:3px 0;">`
-      h += `<div style="display:flex;">`
-      h += `<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.name}</span>`
-      h += `<span style="width:32px;text-align:center;">${item.qty}</span>`
-      h += `<span style="width:65px;text-align:right;">${fmt(item.price)}</span>`
-      h += `<span style="width:75px;text-align:right;">${fmt(sub)}</span>`
-      h += `</div>`
-      if (item.unit) h += `<div style="color:#888;font-size:${fs-1}px;">&nbsp;&nbsp;(${item.unit})</div>`
-      h += `</div>`
+      h += `<div style="padding:2px 0;font-size:${fs*0.95}px;">`
+      h += `<div>${item.name}</div>`
+      h += `<div style="display:flex;justify-content:space-between;padding-left:8px;">`
+      h += `<span>${item.qty} x ${fmt(item.price).replace('Rp', '')}</span>`
+      h += `<span>${fmt(sub).replace('Rp', '')}</span>`
+      h += `</div></div>`
     })
 
-    h += `<div style="margin:6px 0;letter-spacing:2px;text-align:center;">${thinSep}</div>`
+    h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
 
-    // Total
-    h += `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>`
+    // Totals
+    h += `<div style="font-size:${fs*0.95}px;">`
+    h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>Subtotal</span><span>${fmt(subtotal).replace('Rp', '')}</span></div>`
     if (discVal > 0) {
       const label = discountType === 'percent' ? `Diskon (${discount}%)` : 'Diskon'
-      h += `<div style="display:flex;justify-content:space-between;color:#c0392b;padding:2px 0;"><span>${label}</span><span>-${fmt(discVal)}</span></div>`
+      h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>${label}</span><span>-${fmt(discVal).replace('Rp', '')}</span></div>`
     }
     if (taxVal > 0) {
       const label = taxType === 'percent' ? `Pajak (${tax}%)` : 'Pajak'
-      h += `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>${label}</span><span>${fmt(taxVal)}</span></div>`
+      h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>${label}</span><span>${fmt(taxVal).replace('Rp', '')}</span></div>`
     }
-
-    h += `<div style="margin:4px 0;letter-spacing:2px;text-align:center;">${sep}</div>`
-
-    // Grand Total
-    h += `<div style="display:flex;justify-content:space-between;font-size:${fs*1.6}px;font-weight:bold;padding:4px 0;">`
-    h += `<span>TOTAL</span><span>${fmt(total)}</span></div>`
-
-    h += `<div style="margin:4px 0;letter-spacing:2px;text-align:center;">${thinSep}</div>`
-
-    // Pembayaran
+    h += `<div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:bold;"><span>Total</span><span>${fmt(total).replace('Rp', '')}</span></div>`
     if (payment > 0) {
-      h += `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Total Bayar</span><span>${fmt(total)}</span></div>`
-      if (settings.showPaymentMethod) h += `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Metode</span><span>${paymentMethod}</span></div>`
-      h += `<div style="display:flex;justify-content:space-between;padding:2px 0;"><span>Bayar</span><span>${fmt(payment)}</span></div>`
+      const payLabel = paymentMethod === 'Tunai' ? 'TUNAI' : paymentMethod.toUpperCase()
+      h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>${payLabel}</span><span>${fmt(payment).replace('Rp', '')}</span></div>`
       if (settings.showChange) {
-        h += `<div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:bold;"><span>Kembali</span><span>${fmt(change)}</span></div>`
+        h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>Kembalian</span><span>${fmt(change).replace('Rp', '')}</span></div>`
       }
-      h += `<div style="margin:4px 0;letter-spacing:2px;text-align:center;">${thinSep}</div>`
     }
+    h += `</div>`
+
+    h += `<div style="border-bottom:1px dashed #000;margin:6px 0;"></div>`
 
     // QR Code
     if (qrSVG) {
-      h += `<div style="text-align:center;margin:12px 0 6px;">${qrSVG}</div>`
+      h += `<div style="text-align:center;margin:8px 0 4px;">${qrSVG}</div>`
+    }
+
+    // Note
+    if (header.note) {
+      h += `<div style="text-align:center;font-size:${fs*0.9}px;font-style:italic;color:#555;margin:4px 0;">${header.note.replace(/\n/g, '<br>')}</div>`
     }
 
     // Footer
-    if (header.footer) {
-      h += `<div style="text-align:center;font-size:${fs}px;line-height:1.6;">${header.footer.replace(/\n/g, '<br>')}</div>`
+    if (header.footer || header.footerLine2 || header.footerLine3) {
+      h += `<div style="text-align:center;font-size:${fs*0.95}px;margin-top:6px;line-height:1.5;">`
+      if (header.footer) h += `<div>${header.footer}</div>`
+      if (header.footerLine2) h += `<div>${header.footerLine2}</div>`
+      if (header.footerLine3) h += `<div>${header.footerLine3}</div>`
+      h += `</div>`
     }
 
-    // Terima Kasih
+    // Thank You
     if (settings.showThankYou) {
-      h += `<div style="text-align:center;margin-top:10px;font-size:${fs*1.2}px;font-weight:bold;letter-spacing:2px;">*** TERIMA KASIH ***</div>`
-      h += `<div style="text-align:center;font-size:${fs-1}px;color:#888;">~ Selamat Belanja Kembali ~</div>`
+      h += `<div style="text-align:center;margin-top:8px;font-size:${fs}px;font-weight:bold;">*** TERIMA KASIH ***</div>`
+      h += `<div style="text-align:center;font-size:${fs*0.9}px;color:#888;">~ Selamat Belanja Kembali ~</div>`
     }
 
     h += `</div>`
@@ -519,69 +529,88 @@ function App() {
   const generateESCPOS = () => {
     const enc = new TextEncoder()
     const p = []
-    const bc = getBorderChar()
-    const sep = bc.repeat(settings.charPerLine)
+    const cp = settings.charPerLine
+    const sep = '-'.repeat(cp)
 
-    p.push(0x1B, 0x40)
-    p.push(0x1B, 0x61, 0x01)
-    p.push(0x1B, 0x45, 0x01)
-    p.push(0x1D, 0x21, 0x11)
-    p.push(...enc.encode(header.storeName + '\n'))
-    p.push(0x1B, 0x45, 0x00, 0x1D, 0x21, 0x00)
-    p.push(...enc.encode(header.storeAddress + '\n'))
-    if (header.storePhone) p.push(...enc.encode('Telp: ' + header.storePhone + '\n'))
-    if (header.storePhone2) p.push(...enc.encode('HP: ' + header.storePhone2 + '\n'))
-    if (header.storeEmail) p.push(...enc.encode('Email: ' + header.storeEmail + '\n'))
-    p.push(...enc.encode('\n' + sep + '\n\n'))
-    if (header.receiptTitle) p.push(...enc.encode(header.receiptTitle + '\n'))
-    p.push(0x1B, 0x61, 0x00)
-    if (header.receiptNumber) p.push(...enc.encode('No\t: ' + header.receiptNumber + '\n'))
+    p.push(0x1B, 0x40) // Initialize
+    p.push(0x1B, 0x61, 0x01) // Center align
+    if (header.storeName) p.push(...enc.encode(header.storeName + '\n'))
+    
+    const parts = []
+    if (header.storeAddress) parts.push(header.storeAddress.replace(/\n/g, ', '))
+    if (header.storePhone) parts.push(header.storePhone)
+    if (header.storePhone2) parts.push(header.storePhone2)
+    if (parts.length > 0) p.push(...enc.encode(parts.join(', ') + '\n'))
+
+    if (header.receiptTitle) p.push(...enc.encode('\n' + header.receiptTitle + '\n'))
+    
+    p.push(0x1B, 0x61, 0x00) // Left align
+    p.push(...enc.encode('\n'))
+
+    const infoRow = (label, value) => {
+      p.push(...enc.encode(label.padEnd(8) + ': ' + value + '\n'))
+    }
+
     if (header.date) {
       const d = new Date(header.date)
-       p.push(...enc.encode('Tgl\t: ' + d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) + '\n'))
-      p.push(...enc.encode('Jam\t: ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + '\n'))
+      const ds = d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')
+      const ts = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':')
+      infoRow('Tanggal', ds + ' ' + ts)
     }
-    if (header.cashier && settings.showCashier) p.push(...enc.encode('Kasir\t: ' + header.cashier + '\n'))
-    if (header.customer && settings.showCustomer) {
-      p.push(...enc.encode('Cust\t: ' + header.customer + '\n'))
-      if (header.customerAddress) p.push(...enc.encode('Almt\t: ' + header.customerAddress + '\n'))
-      if (header.customerPhone) p.push(...enc.encode('HP\t: ' + header.customerPhone + '\n'))
-    }
+    if (header.cashier && settings.showCashier) infoRow('Kasir', header.cashier)
+    if (header.receiptNumber) infoRow('No Trx', header.receiptNumber)
+    if (header.customer && settings.showCustomer) infoRow('Member', header.customer)
+    header.customFields.forEach(cf => {
+      if (cf.label && cf.value) infoRow(cf.label.substring(0, 8), cf.value)
+    })
+
     p.push(...enc.encode('\n' + sep + '\n'))
-    p.push(...enc.encode(`\n${'Barang'.padEnd(10)} ${'Qty'.padStart(4)}  ${'Harga'.padStart(8)}  ${'Sub'.padStart(10)}\n${sep}\n`))
+
     items.forEach(item => {
       if (!item.name) return
       const sub = item.qty * item.price
-      p.push(...enc.encode(`${item.name.padEnd(10)} ${String(item.qty).padStart(4)}  ${fmt(item.price).padStart(8)}  ${fmt(sub).padStart(10)}\n`))
-      if (item.unit) p.push(...enc.encode(` (${item.unit})\n`))
+      p.push(...enc.encode(`${item.name}\n`))
+      const qtyStr = ` ${item.qty} ${item.unit !== 'Pcs' && item.unit !== '' ? item.unit + ' ' : ''}x ${fmt(item.price).replace('Rp', '')}`
+      const subStr = fmt(sub).replace('Rp', '')
+      const spaceLen = Math.max(1, cp - qtyStr.length - subStr.length)
+      p.push(...enc.encode(`${qtyStr}${' '.repeat(spaceLen)}${subStr}\n`))
     })
-    p.push(...enc.encode('\n' + '-'.repeat(settings.charPerLine) + '\n'))
-    const tw = settings.charPerLine - 10
-    p.push(...enc.encode(`Subtotal${' '.repeat(tw-8)}${fmt(subtotal).padStart(10)}\n`))
-    if (discVal > 0) {
-      const l = discountType === 'percent' ? `Diskon(${discount}%)` : 'Diskon'
-      p.push(...enc.encode(`${l}${' '.repeat(tw-l.length)}-${fmt(discVal).padStart(9)}\n`))
-    }
-    if (taxVal > 0) {
-      const l = taxType === 'percent' ? `Pajak(${tax}%)` : 'Pajak'
-      p.push(...enc.encode(`${l}${' '.repeat(tw-l.length)}${fmt(taxVal).padStart(10)}\n`))
-    }
+
     p.push(...enc.encode(sep + '\n'))
-    p.push(0x1B, 0x45, 0x01)
-    p.push(...enc.encode(`TOTAL${' '.repeat(tw-5)}${fmt(total).padStart(10)}\n`))
-    p.push(0x1B, 0x45, 0x00)
-    if (payment > 0) {
-      p.push(...enc.encode(`Bayar${' '.repeat(tw-5)}${fmt(payment).padStart(10)}\n`))
-      p.push(...enc.encode(`Kembali${' '.repeat(tw-7)}${fmt(change).padStart(10)}\n`))
+
+    const totalRow = (label, value) => {
+      const vStr = fmt(value).replace('Rp', '')
+      const spaceLen = Math.max(1, cp - label.length - vStr.length)
+      p.push(...enc.encode(`${label}${' '.repeat(spaceLen)}${vStr}\n`))
     }
+
+    totalRow('Subtotal', subtotal)
+    if (discVal > 0) totalRow(discountType === 'percent' ? `Diskon (${discount}%)` : 'Diskon', -discVal)
+    if (taxVal > 0) totalRow(taxType === 'percent' ? `Pajak (${tax}%)` : 'Pajak', taxVal)
+    totalRow('Total', total)
+    if (payment > 0) {
+      const payLabel = paymentMethod === 'Tunai' ? 'TUNAI' : paymentMethod.toUpperCase()
+      totalRow(payLabel, payment)
+      if (settings.showChange) totalRow('Kembalian', change)
+    }
+
+    p.push(...enc.encode(sep + '\n'))
+
     if (settings.showQRCode && settings.qrCodeData) {
       p.push(...enc.encode('\nQR: ' + settings.qrCodeData + '\n'))
     }
+
     if (header.footer) {
-      p.push(0x1B, 0x61, 0x01)
-      p.push(...enc.encode('\n' + sep + '\n' + header.footer + '\n\n*** TERIMA KASIH ***\n\n'))
+      p.push(0x1B, 0x61, 0x01) // Center align
+      p.push(...enc.encode('\n' + header.footer + '\n\n'))
     }
-    p.push(0x1D, 0x56, 0x00)
+
+    if (settings.showThankYou) {
+      p.push(0x1B, 0x61, 0x01)
+      p.push(...enc.encode('\n*** TERIMA KASIH ***\n~ Selamat Belanja Kembali ~\n\n'))
+    }
+    
+    p.push(0x1D, 0x56, 0x00) // Cut paper
     return new Uint8Array(p)
   }
 
@@ -736,44 +765,55 @@ function App() {
 
             {/* HEADER TOKO */}
             <section className="card">
-              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M4 2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M8 6h8"/><path d="M8 10h8"/><path d="M8 14h5"/><path d="M8 18h2"/></svg><h3>Informasi Toko</h3></div>
+              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M4 2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M8 6h8"/><path d="M8 10h8"/><path d="M8 14h5"/><path d="M8 18h2"/></svg><h3>Header Struk (Informasi Toko)</h3></div>
               <div className="grid-2">
-                <div className="fg"><label>Nama Toko / Usaha <span className="req">*</span></label><input value={header.storeName} onChange={e => setHeader({...header, storeName: e.target.value})} placeholder="Nama Toko" /></div>
-                <div className="fg"><label>Judul Struk</label><input value={header.receiptTitle} onChange={e => setHeader({...header, receiptTitle: e.target.value})} placeholder="STRUK BELANJA / INVOICE" /></div>
-                <div className="fg"><label>Nomor Struk <span className="req">*</span></label><input value={header.receiptNumber} onChange={e => setHeader({...header, receiptNumber: e.target.value})} placeholder="INV-001" /></div>
-                <div className="fg"><label>Tanggal & Waktu</label><input type="datetime-local" value={header.date} onChange={e => setHeader({...header, date: e.target.value})} /></div>
-                <div className="fg full"><label>Alamat Toko</label><textarea rows="3" value={header.storeAddress} onChange={e => setHeader({...header, storeAddress: e.target.value})} placeholder="Alamat lengkap" /></div>
+                <div className="fg full"><label>Nama Toko / Brand (Paling Atas, Bold) <span className="req">*</span></label><input value={header.storeName} onChange={e => setHeader({...header, storeName: e.target.value})} placeholder="Contoh: BEEPOS" /></div>
+                <div className="fg full"><label>Header Baris 1 (di bawah nama toko)</label><input value={header.headerLine1} onChange={e => setHeader({...header, headerLine1: e.target.value})} placeholder="Contoh: Cafe Bee" /></div>
+                <div className="fg full"><label>Header Baris 2</label><input value={header.headerLine2} onChange={e => setHeader({...header, headerLine2: e.target.value})} placeholder="Contoh: Jl. Kemang Selatan I No.20" /></div>
+                <div className="fg full"><label>Header Baris 3</label><input value={header.headerLine3} onChange={e => setHeader({...header, headerLine3: e.target.value})} placeholder="Contoh: Surabaya, 021-33335800" /></div>
+                <div className="fg full"><label>Judul Struk (opsional, jika ingin ada judul tengah)</label><input value={header.receiptTitle} onChange={e => setHeader({...header, receiptTitle: e.target.value})} placeholder="Contoh: STRUK PENJUALAN" /></div>
+              </div>
+              <span className="hint" style={{marginTop: '8px', display: 'block'}}>Header baris 1-3 akan tampil di bawah nama toko pada struk. Isi sesuai kebutuhan (nama cabang, alamat, telepon, dll).</span>
+            </section>
+
+            {/* INFORMASI TERSEMBUNYI TOKO (untuk export/data) */}
+            <section className="card">
+              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><h3>Data Toko (Tersimpan)</h3></div>
+              <div className="grid-2">
                 <div className="fg"><label>No. Telepon 1</label><input value={header.storePhone} onChange={e => setHeader({...header, storePhone: e.target.value})} placeholder="(021) 1234-5678" /></div>
                 <div className="fg"><label>No. Telepon 2 (HP)</label><input value={header.storePhone2} onChange={e => setHeader({...header, storePhone2: e.target.value})} placeholder="0812-3456-7890" /></div>
                 <div className="fg"><label>Email</label><input value={header.storeEmail} onChange={e => setHeader({...header, storeEmail: e.target.value})} placeholder="email@toko.com" /></div>
                 <div className="fg"><label>Website</label><input value={header.storeWebsite} onChange={e => setHeader({...header, storeWebsite: e.target.value})} placeholder="www.tokoanda.com" /></div>
+                <div className="fg full"><label>Alamat Lengkap (untuk data)</label><textarea rows="2" value={header.storeAddress} onChange={e => setHeader({...header, storeAddress: e.target.value})} placeholder="Alamat lengkap" /></div>
               </div>
             </section>
 
             {/* INFO KASIR & PELANGGAN */}
             <section className="card">
-              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><h3>Kasir & Pelanggan</h3></div>
+              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><h3>Info Kasir & Pelanggan (Data)</h3></div>
               <div className="grid-2">
                 <div className="fg"><label>Nama Kasir</label><input value={header.cashier} onChange={e => setHeader({...header, cashier: e.target.value})} placeholder="Nama Kasir" /></div>
-                <div className="fg"><label>Nama Pelanggan</label><input value={header.customer} onChange={e => setHeader({...header, customer: e.target.value})} placeholder="Nama Pelanggan (opsional)" /></div>
+                <div className="fg"><label>Member / Pelanggan</label><input value={header.customer} onChange={e => setHeader({...header, customer: e.target.value})} placeholder="CASH / Nama pelanggan" /></div>
+                <div className="fg"><label>Nomor Struk / Transaksi</label><input value={header.receiptNumber} onChange={e => setHeader({...header, receiptNumber: e.target.value})} placeholder="INV-001" /></div>
+                <div className="fg"><label>Tanggal & Waktu</label><input type="datetime-local" value={header.date} onChange={e => setHeader({...header, date: e.target.value})} /></div>
                 <div className="fg full"><label>Alamat Pelanggan</label><textarea rows="2" value={header.customerAddress} onChange={e => setHeader({...header, customerAddress: e.target.value})} placeholder="Alamat pelanggan (opsional)" /></div>
                 <div className="fg"><label>No. HP Pelanggan</label><input value={header.customerPhone} onChange={e => setHeader({...header, customerPhone: e.target.value})} placeholder="No. HP pelanggan" /></div>
-                <div className="fg full"><label>Catatan / Note</label><textarea rows="2" value={header.note} onChange={e => setHeader({...header, note: e.target.value})} placeholder="Catatan tambahan (opsional)" /></div>
+                <div className="fg full"><label>Catatan / Note (tampil di struk)</label><textarea rows="2" value={header.note} onChange={e => setHeader({...header, note: e.target.value})} placeholder="Catatan tambahan (opsional)" /></div>
               </div>
             </section>
 
-            {/* CUSTOM FIELDS / FIELD KUSTOM */}
+            {/* CUSTOM FIELDS / KETERANGAN TRANSAKSI */}
             <section className="card">
-              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><h3>Data Tambahan Kustom</h3></div>
+              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><h3>Keterangan Transaksi (Label : Isi)</h3></div>
               <div className="fg full">
-                <span className="hint" style={{marginBottom: '12px', display: 'block'}}>Tambahkan informasi lain yang ingin dimunculkan di struk (Misal: No. Meja, Nama Server, Plat Nomor, dll)</span>
+                <span className="hint" style={{marginBottom: '12px', display: 'block'}}>Ini adalah baris-baris info yang tampil di struk. Kolom KIRI = Judul/Label, kolom KANAN = Isi/Value. Contoh: Tanggal : 24-05-2023, Kasir : Hafiz, dll. Tambah/hapus sesuai kebutuhan.</span>
               </div>
               {header.customFields.map((cf, idx) => (
                 <div className="item-row" key={cf.id} style={{marginBottom: '12px'}}>
                   <div className="item-num">{idx + 1}</div>
                   <div className="item-body" style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%'}}>
-                    <div className="fg" style={{marginBottom: 0}}><input value={cf.label} onChange={e => updateCustomField(cf.id, 'label', e.target.value)} placeholder="Nama Label (Misal: No. Meja)" /></div>
-                    <div className="fg" style={{marginBottom: 0}}><input value={cf.value} onChange={e => updateCustomField(cf.id, 'value', e.target.value)} placeholder="Isi Data (Misal: 14)" /></div>
+                    <div className="fg" style={{marginBottom: 0}}><label style={{fontSize:'10px'}}>LABEL (KIRI)</label><input value={cf.label} onChange={e => updateCustomField(cf.id, 'label', e.target.value)} placeholder="Judul (cth: Tanggal)" /></div>
+                    <div className="fg" style={{marginBottom: 0}}><label style={{fontSize:'10px'}}>ISI (KANAN)</label><input value={cf.value} onChange={e => updateCustomField(cf.id, 'value', e.target.value)} placeholder="Isi (cth: 24-05-2023)" /></div>
                   </div>
                   <button className="btn-del" onClick={() => removeCustomField(cf.id)}>
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -782,7 +822,7 @@ function App() {
               ))}
               <button className="btn-add" onClick={addCustomField}>
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Tambah Field
+                Tambah Baris Keterangan
               </button>
             </section>
 
@@ -870,12 +910,26 @@ function App() {
 
             {/* FOOTER */}
             <section className="card">
-              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M3 15h18"/><path d="M3 19h18"/><path d="M3 11h18"/><path d="M3 7h18"/></svg><h3>Footer Struk</h3></div>
-              <div className="fg full">
-                <label>Pesan Bawah / Footer</label>
-                <textarea rows="4" value={header.footer} onChange={e => setHeader({...header, footer: e.target.value})} placeholder="Terima kasih telah berbelanja..." />
-                <span className="hint">Gunakan Enter untuk baris baru</span>
+              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><path d="M3 15h18"/><path d="M3 19h18"/><path d="M3 11h18"/><path d="M3 7h18"/></svg><h3>Footer Struk (Bagian Bawah)</h3></div>
+              <div className="grid-2">
+                <div className="fg full">
+                  <label>Footer Baris 1</label>
+                  <input value={header.footer} onChange={e => setHeader({...header, footer: e.target.value})} placeholder="Contoh: ** Supported by bee.id **" />
+                </div>
+                <div className="fg full">
+                  <label>Footer Baris 2 (opsional)</label>
+                  <input value={header.footerLine2 || ''} onChange={e => setHeader({...header, footerLine2: e.target.value})} placeholder="Contoh: Terima kasih atas kunjungan Anda" />
+                </div>
+                <div className="fg full">
+                  <label>Footer Baris 3 (opsional)</label>
+                  <input value={header.footerLine3 || ''} onChange={e => setHeader({...header, footerLine3: e.target.value})} placeholder="Contoh: Barang yang sudah dibeli tidak dapat dikembalikan" />
+                </div>
+                <div className="fg full">
+                  <label>Catatan / Note (tampil miring)</label>
+                  <textarea rows="2" value={header.note} onChange={e => setHeader({...header, note: e.target.value})} placeholder="Catatan tambahan (opsional)" />
+                </div>
               </div>
+              <span className="hint" style={{marginTop: '8px', display: 'block'}}>Footer tampil di bagian paling bawah struk sebelum "Terima Kasih"</span>
             </section>
 
             {/* TOMBOL SIMPAN */}
@@ -918,7 +972,7 @@ function App() {
                 </button>
               </div>
               <div className="prev-info">
-                <span>📄 {settings.paperSize}mm</span>
+                <span>📄 58mm</span>
                 <span>✏️ {settings.fontFamily.split(',')[0].replace(/'/g, '')}</span>
                 <span>📏 {settings.fontSize}px</span>
                 <span>💰 {fmt(total)}</span>
@@ -935,69 +989,66 @@ function App() {
                 color: settings.fontColor,
                 fontSize: settings.fontSize + 'px',
               }}>
-                {/* HEADER TOKO */}
-                <div className="s-header" style={{ textAlign: settings.align }}>
-                  {settings.showLogo && logoImage && (
-                    <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-                      <div style={getLogoWrapperStyle()}>
-                        <img src={logoImage} alt="Logo" style={getLogoImgStyle()} />
-                      </div>
+                {/* LOGO */}
+                {settings.showLogo && logoImage && (
+                  <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+                    <div style={getLogoWrapperStyle()}>
+                      <img src={logoImage} alt="Logo" style={getLogoImgStyle()} />
                     </div>
-                  )}
-                  {settings.showLogo && !logoImage && settings.logoText && (
-                    <div className="s-logo">{settings.logoText}</div>
-                  )}
-                  <div className="s-namatoko">{header.storeName || 'TOKO ANDA'}</div>
-                  <div className="s-alamat">{header.storeAddress}</div>
-                  {header.storePhone && <div>No. Telp {header.storePhone}</div>}
-                  {header.storePhone2 && <div>HP: {header.storePhone2}</div>}
-                  {header.storeEmail && <div>Email: {header.storeEmail}</div>}
-                  {header.storeWebsite && <div>Web: {header.storeWebsite}</div>}
-                  {header.receiptNumber && <div style={{ marginTop: '2px' }}>{header.receiptNumber}</div>}
+                  </div>
+                )}
+                {settings.showLogo && !logoImage && settings.logoText && (
+                  <div style={{ textAlign: 'center', fontSize: '1.5em', fontWeight: 'bold', marginBottom: '4px' }}>{settings.logoText}</div>
+                )}
+
+                {/* STORE NAME */}
+                {header.storeName && (
+                  <div style={{ textAlign: 'center', fontSize: '1.3em', fontWeight: 'bold', letterSpacing: '1px' }}>{header.storeName}</div>
+                )}
+
+                {/* HEADER LINES */}
+                <div style={{ textAlign: 'center', fontSize: '0.9em', marginTop: '2px' }}>
+                  {header.headerLine1 && <div>{header.headerLine1}</div>}
+                  {header.headerLine2 && <div>{header.headerLine2}</div>}
+                  {header.headerLine3 && <div>{header.headerLine3}</div>}
                 </div>
 
-                <div className={`s-sep ${settings.borderStyle}`}></div>
+                {/* RECEIPT TITLE */}
+                {header.receiptTitle && (
+                  <>
+                    <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
+                    <div style={{ textAlign: 'center', fontSize: '1.1em', fontWeight: 'bold', margin: '4px 0' }}>{header.receiptTitle}</div>
+                  </>
+                )}
 
-                {/* JUDUL */}
-                {header.receiptTitle && <div className="s-judul">{header.receiptTitle}</div>}
+                <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
 
-                {/* INFO TRANSAKSI */}
-                <div className="s-info" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.95em' }}>
-                  <div className="s-info-col" style={{ textAlign: 'left' }}>
-                    {header.date && (() => {
-                      const d = new Date(header.date)
-                      const dateStr = d.toLocaleDateString('sv-SE') // YYYY-MM-DD format roughly matches 2023-08-02
-                      const timeStr = d.toLocaleTimeString('en-GB') // HH:MM:SS format
-                      return (
-                        <>
-                          <div>{dateStr}</div>
-                          <div>{timeStr}</div>
-                        </>
-                      )
-                    })()}
-                    {header.customFields.map(cf => (
-                      cf.label && cf.value && <div key={cf.id}>{cf.label} {cf.value}</div>
-                    ))}
-                  </div>
-                  <div className="s-info-col" style={{ textAlign: 'right' }}>
-                    {header.cashier && settings.showCashier && <div>{header.cashier}</div>}
-                    {header.customer && settings.showCustomer && <div>{header.customer}</div>}
-                    {header.customerAddress && settings.showCustomer && <div>{header.customerAddress}</div>}
-                    {header.customerPhone && settings.showCustomer && <div>{header.customerPhone}</div>}
-                  </div>
-                </div>
-
-                <div className={`s-sep ${settings.borderStyle}`}></div>
+                {/* TRANSACTION INFO (Custom Fields as Label : Value) */}
+                {header.customFields && header.customFields.length > 0 && (
+                  <>
+                    <div style={{ fontSize: '0.9em', margin: '6px 0' }}>
+                      {header.customFields.map(cf => (
+                        cf.label && cf.value && (
+                          <div key={cf.id} style={{ display: 'flex' }}>
+                            <span style={{ minWidth: '72px' }}>{cf.label}</span>
+                            <span>: {cf.value}</span>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                    <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
+                  </>
+                )}
 
                 {/* ITEMS */}
                 {items.map((item, i) => (
-                  <div className="s-item" key={i} style={{ padding: '4px 0', borderBottom: 'none' }}>
+                  <div key={i} style={{ padding: '2px 0', fontSize: '0.9em' }}>
                     {item.name ? (
                       <>
-                        <div className="s-item-name" style={{ fontWeight: 'bold' }}>{i + 1}. {item.name}</div>
-                        <div className="s-item-details" style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '12px' }}>
-                          <span>{item.qty} {item.unit !== 'Pcs' && item.unit !== '' ? item.unit + ' ' : ''}x {fmt(item.price).replace('Rp', '')}</span>
-                          <span>{fmt(item.qty * item.price)}</span>
+                        <div>{item.name}</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '8px' }}>
+                          <span>{item.qty} x {fmt(item.price).replace('Rp', '')}</span>
+                          <span>{fmt(item.qty * item.price).replace('Rp', '')}</span>
                         </div>
                       </>
                     ) : (
@@ -1006,36 +1057,27 @@ function App() {
                   </div>
                 ))}
 
-                <div className="s-sep-thin"></div>
+                <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
 
-                <div style={{ padding: '4px 0', marginBottom: '4px' }}>
-                  Total QTY : {items.reduce((acc, curr) => acc + (Number(curr.qty) || 0), 0)}
+                {/* TOTALS */}
+                <div style={{ fontSize: '0.9em' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>Subtotal</span><span>{fmt(subtotal).replace('Rp', '')}</span></div>
+                  {discVal > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>{discountType === 'percent' ? `Diskon (${discount}%)` : 'Diskon'}</span><span>-{fmt(discVal).replace('Rp', '')}</span></div>}
+                  {taxVal > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>{taxType === 'percent' ? `Pajak (${tax}%)` : 'Pajak'}</span><span>{fmt(taxVal).replace('Rp', '')}</span></div>}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0', fontWeight: 'bold' }}><span>Total</span><span>{fmt(total).replace('Rp', '')}</span></div>
+                  {payment > 0 && (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span style={{ textTransform: 'uppercase' }}>{paymentMethod === 'Tunai' ? 'TUNAI' : paymentMethod}</span><span>{fmt(payment).replace('Rp', '')}</span></div>
+                      {settings.showChange && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>Kembalian</span><span>{fmt(change).replace('Rp', '')}</span></div>}
+                    </>
+                  )}
                 </div>
 
-                {/* TOTAL */}
-                <div className="s-total-r"><span>Sub Total</span><span>{fmt(subtotal)}</span></div>
-                {discVal > 0 && <div className="s-total-r merah"><span>{discountType === 'percent' ? `Diskon (${discount}%)` : 'Diskon'}</span><span className="s-minus">-{fmt(discVal)}</span></div>}
-                {taxVal > 0 && <div className="s-total-r"><span>{taxType === 'percent' ? `Pajak (${tax}%)` : 'Pajak'}</span><span>{fmt(taxVal)}</span></div>}
+                <div style={{ borderBottom: '1px dashed #000', margin: '6px 0' }}></div>
 
-                <div className="s-grand" style={{ fontSize: '1.2em', margin: '2px 0' }}>
-                  <span>Total</span>
-                  <span>{fmt(total)}</span>
-                </div>
-
-                {/* PEMBAYARAN */}
-                {payment > 0 && (
-                  <>
-                    <div className="s-total-r"><span>Bayar {settings.showPaymentMethod ? `(${paymentMethod})` : '(Cash)'}</span><span>{fmt(payment)}</span></div>
-                    {settings.showChange && <div className="s-total-r"><span>Kembali</span><span>{fmt(change)}</span></div>}
-                  </>
-                )}
-
-                {header.note && (
-                  <div className="s-note" style={{ marginTop: '12px' }}><i>{header.note.split('\n').map((l, i) => <div key={i}>{l}</div>)}</i></div>
-                )}
-
-                 {settings.showQRCode && settings.qrCodeData && (
-                   <div className="s-barcode" style={{ textAlign: 'center', border: settings.qrCodeBorder ? `${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor}` : 'none', borderRadius: '4px', padding: `${settings.qrCodeFrameWidth}px`, margin: '8px auto', background: settings.qrCodeBgColor, maxWidth: '100%' }}>
+                {/* QR CODE */}
+                {settings.showQRCode && settings.qrCodeData && (
+                  <div className="s-barcode" style={{ textAlign: 'center', border: settings.qrCodeBorder ? `${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor}` : 'none', borderRadius: '4px', padding: `${settings.qrCodeFrameWidth}px`, margin: '8px auto', background: settings.qrCodeBgColor, maxWidth: '100%' }}>
                     <QRCodeSVG
                       value={settings.qrCodeData}
                       size={settings.qrCodeSize}
@@ -1048,21 +1090,27 @@ function App() {
                   </div>
                 )}
 
+                {/* NOTE */}
+                {header.note && (
+                  <div style={{ textAlign: 'center', fontSize: '0.85em', fontStyle: 'italic', color: '#555', margin: '4px 0' }}>
+                    {header.note.split('\n').map((l, i) => <div key={i}>{l}</div>)}
+                  </div>
+                )}
+
                 {/* FOOTER */}
-                {header.footer && (
-                  <div className="s-footer">
-                    <div className={`s-sep ${settings.borderStyle}`}></div>
-                    <div style={{ textAlign: 'center', lineHeight: '1.6' }}>
-                      {header.footer.split('\n').map((l, i) => <div key={i}>{l || '\u00A0'}</div>)}
-                    </div>
+                {(header.footer || header.footerLine2 || header.footerLine3) && (
+                  <div style={{ textAlign: 'center', fontSize: '0.9em', marginTop: '6px', lineHeight: '1.5' }}>
+                    {header.footer && <div>{header.footer}</div>}
+                    {header.footerLine2 && <div>{header.footerLine2}</div>}
+                    {header.footerLine3 && <div>{header.footerLine3}</div>}
                   </div>
                 )}
 
                 {/* TERIMA KASIH */}
                 {settings.showThankYou && (
                   <>
-                    <div className="s-end">*** TERIMA KASIH ***</div>
-                    <div className="s-end-sub">~ Selamat Belanja Kembali ~</div>
+                    <div style={{ textAlign: 'center', marginTop: '8px', fontWeight: 'bold', fontSize: '1em' }}>*** TERIMA KASIH ***</div>
+                    <div style={{ textAlign: 'center', fontSize: '0.85em', color: '#888' }}>~ Selamat Belanja Kembali ~</div>
                   </>
                 )}
               </div>
