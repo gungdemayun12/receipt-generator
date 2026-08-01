@@ -25,6 +25,14 @@ const FONT_OPTIONS = [
 ]
 
 const FONT_SIZES = [8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24]
+const FONT_WEIGHTS = [
+  { name: 'Thin (100)', value: '100' },
+  { name: 'Light (300)', value: '300' },
+  { name: 'Normal (400)', value: '400' },
+  { name: 'Medium (500)', value: '500' },
+  { name: 'SemiBold (600)', value: '600' },
+  { name: 'Bold (700)', value: '700' },
+]
 const CHAR_PER_LINE_OPTIONS = [24, 28, 32, 36, 40, 44, 48, 52, 56, 60]
 
 const COLORS = [
@@ -107,6 +115,7 @@ function App() {
     paperSize: 58,
     fontFamily: "'Courier Prime', 'Courier New', monospace",
     fontSize: 12,
+    fontWeight: '400',
     fontColor: '#000000',
     showQRCode: false,
     align: 'center',
@@ -127,7 +136,7 @@ function App() {
     logoBorderColor: '#000000',
     logoBorderStyle: 'solid',
     logoBgColor: 'transparent',
-    qrCodeText: 'Scan for details',
+    qrCodeText: '',
     qrCodeData: generateQRCodeData(),
     qrCodeSize: 160,
     qrCodeFgColor: '#000000',
@@ -312,7 +321,7 @@ function App() {
     setDiscount(0); setDiscountType('nominal')
     setTax(11); setTaxType('percent')
     setPayment(200000); setPaymentMethod('Tunai')
-    setSettings(p => ({ ...p, showLogo: true, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: false, qrCodeText: 'Scan for details', qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: false, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
+    setSettings(p => ({ ...p, showLogo: true, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: false, qrCodeText: '', qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: false, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4, fontWeight: '400' }))
     setLogoImage('')
     nextId.current = 6
     setShowReset(false)
@@ -388,7 +397,7 @@ function App() {
     const font = settings.fontFamily
     const w = 280
 
-    let h = `<div style="width:${w}px;padding:16px 12px;background:#fff;color:${color};font-family:${font};font-size:${fs}px;line-height:1.5;margin:auto;">`
+    let h = `<div style="width:${w}px;padding:16px 12px;background:#fff;color:${color};font-family:${font};font-size:${fs}px;font-weight:${settings.fontWeight || '400'};line-height:1.5;margin:auto;">`
 
     // Logo
     if (settings.showLogo && logoImage) {
@@ -511,12 +520,12 @@ function App() {
       if (settings.qrCodeText) {
         h += `<div style="text-align:center;font-size:${fs*0.9}px;margin-top:6px;font-weight:bold;">${settings.qrCodeText}</div>`
       }
-      h += `<div style="text-align:center;margin:4px 0 4px;">${qrSVG}</div>`
+      h += `<div style="text-align:center;margin:2px 0 2px;">${qrSVG}</div>`
     }
 
     // Ticket Number
     if (header.ticketNumber) {
-      h += `<div style="text-align:center;margin:8px 0;padding:6px;border:2px dashed ${color};border-radius:4px;font-size:${fs*1.6}px;font-weight:bold;letter-spacing:3px;">${header.ticketNumber}</div>`
+      h += `<div style="text-align:center;margin:2px 0;padding:6px;border:2px dashed ${color};border-radius:4px;font-size:${fs*1.6}px;font-weight:bold;letter-spacing:3px;">${header.ticketNumber}</div>`
     }
 
     // Note
@@ -526,7 +535,7 @@ function App() {
 
     // Footer
     if (header.socialMedia || header.wifiPassword || header.footer || header.footerLine2 || header.footerLine3) {
-      h += `<div style="text-align:center;font-size:${fs*0.95}px;margin-top:6px;line-height:1.5;">`
+      h += `<div style="text-align:center;font-size:${fs*0.95}px;margin-top:2px;line-height:1.5;">`
       if (header.socialMedia) h += `<div style="font-weight:bold;margin-bottom:2px;">📱 ${header.socialMedia}</div>`
       if (header.wifiPassword) h += `<div style="margin-bottom:4px;">📶 WiFi: ${header.wifiPassword}</div>`
       if (header.footer) h += `<div>${header.footer}</div>`
@@ -537,7 +546,7 @@ function App() {
 
     // Thank You
     if (settings.showThankYou) {
-      h += `<div style="text-align:center;margin-top:8px;font-size:${fs}px;font-weight:bold;">*** THANK YOU ***</div>`
+      h += `<div style="text-align:center;margin-top:2px;font-size:${fs}px;font-weight:bold;">*** THANK YOU ***</div>`
       h += `<div style="text-align:center;font-size:${fs*0.9}px;color:#888;">~ Please Come Again ~</div>`
     }
 
@@ -1094,6 +1103,7 @@ function App() {
                 fontFamily: settings.fontFamily,
                 color: settings.fontColor,
                 fontSize: settings.fontSize + 'px',
+                fontWeight: settings.fontWeight || '400',
               }}>
                 {/* LOGO */}
                 {settings.showLogo && logoImage && (
@@ -1235,7 +1245,7 @@ function App() {
                     {settings.qrCodeText && (
                       <div style={{ fontSize: '0.9em', marginTop: '6px', fontWeight: 'bold' }}>{settings.qrCodeText}</div>
                     )}
-                    <div className="s-barcode" style={{ border: settings.qrCodeBorder ? `${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor}` : 'none', borderRadius: '4px', padding: `${settings.qrCodeFrameWidth}px`, margin: '4px auto', background: settings.qrCodeBgColor, display: 'inline-block', maxWidth: '100%' }}>
+                    <div className="s-barcode" style={{ border: settings.qrCodeBorder ? `${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor}` : 'none', borderRadius: '4px', padding: `${settings.qrCodeFrameWidth}px`, margin: '2px auto', background: settings.qrCodeBgColor, display: 'inline-block', maxWidth: '100%' }}>
                       <QRCodeSVG
                         value={settings.qrCodeData}
                         size={settings.qrCodeSize}
@@ -1251,7 +1261,7 @@ function App() {
 
                 {/* TICKET NUMBER */}
                 {header.ticketNumber && (
-                  <div style={{ textAlign: 'center', margin: '8px 0', padding: '6px', border: '2px dashed currentColor', borderRadius: '4px', fontSize: '1.6em', fontWeight: 'bold', letterSpacing: '3px' }}>
+                  <div style={{ textAlign: 'center', margin: '2px 0', padding: '6px', border: '2px dashed currentColor', borderRadius: '4px', fontSize: '1.6em', fontWeight: 'bold', letterSpacing: '3px' }}>
                     {header.ticketNumber}
                   </div>
                 )}
@@ -1265,7 +1275,7 @@ function App() {
 
                 {/* FOOTER */}
                 {(header.socialMedia || header.wifiPassword || header.footer || header.footerLine2 || header.footerLine3) && (
-                  <div style={{ textAlign: 'center', fontSize: '0.9em', marginTop: '6px', lineHeight: '1.5' }}>
+                  <div style={{ textAlign: 'center', fontSize: '0.9em', marginTop: '2px', lineHeight: '1.5' }}>
                     {header.socialMedia && <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>📱 {header.socialMedia}</div>}
                     {header.wifiPassword && <div style={{ marginBottom: '4px' }}>📶 WiFi: {header.wifiPassword}</div>}
                     {header.footer && <div>{header.footer}</div>}
@@ -1277,7 +1287,7 @@ function App() {
                 {/* TERIMA KASIH */}
                 {settings.showThankYou && (
                   <>
-                    <div style={{ textAlign: 'center', marginTop: '8px', fontWeight: 'bold', fontSize: '1em' }}>*** THANK YOU ***</div>
+                    <div style={{ textAlign: 'center', marginTop: '2px', fontWeight: 'bold', fontSize: '1em' }}>*** THANK YOU ***</div>
                     <div style={{ textAlign: 'center', fontSize: '0.85em', color: '#888' }}>~ Please Come Again ~</div>
                   </>
                 )}
@@ -1302,6 +1312,12 @@ function App() {
                   <label>Ukuran Font</label>
                   <select value={settings.fontSize} onChange={e => setSettings({...settings, fontSize: Number(e.target.value)})}>
                     {FONT_SIZES.map(s => <option key={s} value={s}>{s} px</option>)}
+                  </select>
+                </div>
+                <div className="fg">
+                  <label>Ketebalan Font</label>
+                  <select value={settings.fontWeight} onChange={e => setSettings({...settings, fontWeight: e.target.value})}>
+                    {FONT_WEIGHTS.map(fw => <option key={fw.value} value={fw.value}>{fw.name}</option>)}
                   </select>
                 </div>
                 <div className="fg">
