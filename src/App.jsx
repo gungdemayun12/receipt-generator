@@ -71,9 +71,9 @@ function App() {
     headerLine2: 'Jl. Kemang Selatan I No.20',
     headerLine3: 'Surabaya, 021-33335800',
     customFields: [
-      { id: 1, label: 'Tanggal', value: '24-05-2023 16:45' },
-      { id: 2, label: 'Kasir', value: 'Hafiz' },
-      { id: 3, label: 'No Trx', value: 'JL/0022305241645/004' },
+      { id: 1, label: 'Date', value: '24-05-2023 16:45' },
+      { id: 2, label: 'Cashier', value: 'Hafiz' },
+      { id: 3, label: 'Trx No', value: 'JL/0022305241645/004' },
       { id: 4, label: 'Member', value: 'CASH' },
       { id: 5, label: 'Channel', value: 'Dine In' }
     ],
@@ -123,7 +123,7 @@ function App() {
     logoBorderColor: '#000000',
     logoBorderStyle: 'solid',
     logoBgColor: 'transparent',
-    qrCodeText: 'Scan untuk detail',
+    qrCodeText: 'Scan for details',
     qrCodeData: generateQRCodeData(),
     qrCodeSize: 160,
     qrCodeFgColor: '#000000',
@@ -290,9 +290,9 @@ function App() {
       headerLine2: 'Jl. Kemang Selatan I No.20',
       headerLine3: 'Surabaya, 021-33335800',
       customFields: [
-        { id: 1, label: 'Tanggal', value: '24-05-2023 16:45' },
-        { id: 2, label: 'Kasir', value: 'Hafiz' },
-        { id: 3, label: 'No Trx', value: 'JL/0022305241645/004' },
+        { id: 1, label: 'Date', value: '24-05-2023 16:45' },
+        { id: 2, label: 'Cashier', value: 'Hafiz' },
+        { id: 3, label: 'Trx No', value: 'JL/0022305241645/004' },
         { id: 4, label: 'Member', value: 'CASH' },
         { id: 5, label: 'Channel', value: 'Dine In' }
       ],
@@ -304,7 +304,7 @@ function App() {
     setDiscount(0); setDiscountType('nominal')
     setTax(11); setTaxType('percent')
     setPayment(200000); setPaymentMethod('Tunai')
-    setSettings(p => ({ ...p, showLogo: true, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: false, qrCodeText: 'Scan untuk detail', qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: false, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
+    setSettings(p => ({ ...p, showLogo: true, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: false, qrCodeText: 'Scan for details', qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: false, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
     setLogoImage('')
     nextId.current = 6
     setShowReset(false)
@@ -583,12 +583,12 @@ function App() {
 
     if (header.date) {
       const d = new Date(header.date)
-      const ds = d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')
-      const ts = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':')
-      infoRow('Tanggal', ds + ' ' + ts)
+      const ds = d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')
+      const ts = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':')
+      infoRow('Date', ds + ' ' + ts)
     }
-    if (header.cashier && settings.showCashier) infoRow('Kasir', header.cashier)
-    if (header.receiptNumber) infoRow('No Trx', header.receiptNumber)
+    if (header.cashier && settings.showCashier) infoRow('Cashier', header.cashier)
+    if (header.receiptNumber) infoRow('Trx No', header.receiptNumber)
     if (header.customer && settings.showCustomer) infoRow('Member', header.customer)
     header.customFields.forEach(cf => {
       if (cf.label && cf.value) infoRow(cf.label.substring(0, 8), cf.value)
@@ -1113,7 +1113,7 @@ function App() {
                         </>
                       )
                     ) : (
-                      <div className="s-empty">(kosong)</div>
+                      <div className="s-empty">(empty)</div>
                     )}
                   </div>
                 ))}
