@@ -53,34 +53,34 @@ const PAYMENT_METHODS = ['Tunai', 'QRIS/OVO/GoPay', 'Kartu Debit', 'Kartu Kredit
 
 function App() {
   const [header, setHeader] = useState({
-    storeName: 'BEEPOS',
+    storeName: 'OKA MARKET',
     storeSlogan: '',
-    storeAddress: 'Jl. Kemang Selatan I No.20\nSurabaya, 021-33335800',
-    storePhone: '021-33335800',
+    storeAddress: 'Jalan Raya Batubulan, 80582',
+    storePhone: '0812-3456-7890',
     storePhone2: '',
     storeEmail: '',
     storeWebsite: '',
     receiptTitle: '',
-    receiptNumber: 'JL/0022305241645/004',
+    receiptNumber: 'OM/0022305241645/004',
     date: new Date().toISOString().slice(0, 16),
     cashier: 'Hafiz',
     customer: 'CASH',
     customerAddress: '',
     customerPhone: '',
     note: '',
-    ticketNumber: '',
+    ticketNumber: 'B-012',
     socialMedia: '',
     wifiPassword: '',
-    loyaltyPoints: '',
-    headerLine1: 'Cafe Bee',
-    headerLine2: 'Jl. Kemang Selatan I No.20',
-    headerLine3: 'Surabaya, 021-33335800',
+    loyaltyPoints: '+10 Pts',
+    headerLine1: 'Oka Market',
+    headerLine2: 'Jalan Raya Batubulan',
+    headerLine3: 'Gianyar, Bali 80582',
     customFields: [
       { id: 1, label: 'Date', value: '24-05-2023 16:45' },
       { id: 2, label: 'Cashier', value: 'Hafiz' },
-      { id: 3, label: 'Trx No', value: 'JL/0022305241645/004' },
+      { id: 3, label: 'Trx No', value: 'OM/0022305241645/004' },
       { id: 4, label: 'Member', value: 'CASH' },
-      { id: 5, label: 'Channel', value: 'Dine In' }
+      { id: 5, label: 'Channel', value: 'Retail' }
     ],
     footer: '** Supported by bee.id **',
     footerLine2: '',
@@ -98,10 +98,11 @@ function App() {
   }
 
   const [items, setItems] = useState([
-    { id: 1, name: 'Bakso', qty: 2, unit: 'Pcs', price: 12000 },
-    { id: 2, name: 'Cah kangkung', qty: 3, unit: 'Pcs', price: 7500 },
-    { id: 3, name: 'Cap Jay', qty: 3, unit: 'Pcs', price: 17000 },
-    { id: 4, name: 'Cumi Goreng Tepung Gurih', qty: 3, unit: 'Pcs', price: 25000 }
+    { id: 1, name: 'Beras Premium 5kg', qty: 2, unit: 'Pack', price: 68000 },
+    { id: 2, name: 'Telur Ayam', qty: 1, unit: 'Kg', price: 32000 },
+    { id: 3, name: 'Minyak Goreng 1L', qty: 3, unit: 'Botol', price: 18000 },
+    { id: 4, name: 'Gula Pasir 1kg', qty: 2, unit: 'Pack', price: 17000 },
+    { id: 5, name: 'Kopi Bubuk', qty: 1, unit: 'Pack', price: 25000 }
   ])
 
   const [settings, setSettings] = useState({
@@ -269,40 +270,46 @@ function App() {
 
   const resetAll = () => {
     setHeader({
-      storeName: 'BEEPOS',
+      storeName: 'OKA MARKET',
       storeSlogan: '',
-      storeAddress: 'Jl. Kemang Selatan I No.20\nSurabaya, 021-33335800',
-      storePhone: '021-33335800',
+      storeAddress: 'Jalan Raya Batubulan, 80582',
+      storePhone: '0812-3456-7890',
       storePhone2: '',
       storeEmail: '',
       storeWebsite: '',
       receiptTitle: '',
-      receiptNumber: 'JL/0022305241645/004',
+      receiptNumber: 'OM/0022305241645/004',
       date: new Date().toISOString().slice(0, 16),
       cashier: 'Hafiz',
       customer: 'CASH',
       customerAddress: '',
       customerPhone: '',
       note: '',
-      ticketNumber: '',
+      ticketNumber: 'B-012',
       socialMedia: '',
       wifiPassword: '',
-      loyaltyPoints: '',
-      headerLine1: 'Cafe Bee',
-      headerLine2: 'Jl. Kemang Selatan I No.20',
-      headerLine3: 'Surabaya, 021-33335800',
+      loyaltyPoints: '+10 Pts',
+      headerLine1: 'Oka Market',
+      headerLine2: 'Jalan Raya Batubulan',
+      headerLine3: 'Gianyar, Bali 80582',
       customFields: [
         { id: 1, label: 'Date', value: '24-05-2023 16:45' },
         { id: 2, label: 'Cashier', value: 'Hafiz' },
-        { id: 3, label: 'Trx No', value: 'JL/0022305241645/004' },
+        { id: 3, label: 'Trx No', value: 'OM/0022305241645/004' },
         { id: 4, label: 'Member', value: 'CASH' },
-        { id: 5, label: 'Channel', value: 'Dine In' }
+        { id: 5, label: 'Channel', value: 'Retail' }
       ],
       footer: '** Supported by bee.id **',
       footerLine2: '',
       footerLine3: '',
     })
-    setItems([{ id: 1, name: 'Bakso', qty: 2, unit: 'Pcs', price: 12000 }])
+    setItems([
+      { id: 1, name: 'Beras Premium 5kg', qty: 2, unit: 'Pack', price: 68000 },
+      { id: 2, name: 'Telur Ayam', qty: 1, unit: 'Kg', price: 32000 },
+      { id: 3, name: 'Minyak Goreng 1L', qty: 3, unit: 'Botol', price: 18000 },
+      { id: 4, name: 'Gula Pasir 1kg', qty: 2, unit: 'Pack', price: 17000 },
+      { id: 5, name: 'Kopi Bubuk', qty: 1, unit: 'Pack', price: 25000 }
+    ])
     setDiscount(0); setDiscountType('nominal')
     setTax(11); setTaxType('percent')
     setPayment(200000); setPaymentMethod('Tunai')
