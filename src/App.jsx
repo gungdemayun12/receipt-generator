@@ -33,7 +33,6 @@ const FONT_WEIGHTS = [
   { name: 'SemiBold (600)', value: '600' },
   { name: 'Bold (700)', value: '700' },
 ]
-const CHAR_PER_LINE_OPTIONS = [24, 28, 32, 36, 40, 44, 48, 52, 56, 60]
 
 const COLORS = [
   { name: 'Hitam', value: '#000000' },
@@ -51,12 +50,6 @@ const COLORS = [
 const UNITS = ['Pcs', 'Kg', 'Gr', 'Liter', 'Ml', 'Meter', 'Cm', 'Box', 'Pack', 'Sak', 'Botol', 'Karton', 'Lembar', 'Pasang', 'Buah', 'Ikat', 'Kilo', 'Ons', 'Dus', 'Karung', 'Bungkus', 'Kaleng', 'Toples', 'Batang', 'Lusin', 'Rim', 'Gulung']
 
 const PAYMENT_METHODS = ['Tunai', 'QRIS/OVO/GoPay', 'Kartu Debit', 'Kartu Kredit', 'Transfer Bank', 'Bayar di Tempat']
-
-const ALIGN_OPTIONS = [
-  { name: 'Kiri', value: 'left' },
-  { name: 'Tengah', value: 'center' },
-  { name: 'Kanan', value: 'right' },
-]
 
 function App() {
   const [header, setHeader] = useState({
@@ -232,14 +225,6 @@ function App() {
       height: '100%',
       objectFit,
       display: 'block',
-    }
-  }
-
-  const getBorderChar = () => {
-    switch(settings.borderStyle) {
-      case 'dashes': return '-'
-      case 'stars': return '*'
-      default: return '='
     }
   }
 
