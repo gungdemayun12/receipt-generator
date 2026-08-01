@@ -123,6 +123,7 @@ function App() {
     logoBorderColor: '#000000',
     logoBorderStyle: 'solid',
     logoBgColor: 'transparent',
+    qrCodeText: 'Scan untuk detail',
     qrCodeData: generateQRCodeData(),
     qrCodeSize: 160,
     qrCodeFgColor: '#000000',
@@ -303,7 +304,7 @@ function App() {
     setDiscount(0); setDiscountType('nominal')
     setTax(11); setTaxType('percent')
     setPayment(200000); setPaymentMethod('Tunai')
-    setSettings(p => ({ ...p, showLogo: true, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: false, qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: false, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
+    setSettings(p => ({ ...p, showLogo: true, logoText: '', logoWidth: 120, logoHeight: 120, logoShape: 'none', logoBorderWidth: 2, logoBorderColor: '#000000', logoBorderStyle: 'solid', logoBgColor: 'transparent', showQRCode: false, qrCodeText: 'Scan untuk detail', qrCodeData: generateQRCodeData(), qrCodeSize: 160, qrCodeFgColor: '#000000', qrCodeBgColor: '#ffffff', qrCodeLevel: 'M', qrCodeBorder: false, qrCodeBorderWidth: 2, qrCodeBorderColor: '#000000', qrCodeFrameWidth: 4 }))
     setLogoImage('')
     nextId.current = 6
     setShowReset(false)
@@ -485,7 +486,10 @@ function App() {
 
     // QR Code
     if (qrSVG) {
-      h += `<div style="text-align:center;margin:8px 0 4px;">${qrSVG}</div>`
+      if (settings.qrCodeText) {
+        h += `<div style="text-align:center;font-size:${fs*0.9}px;margin-top:6px;font-weight:bold;">${settings.qrCodeText}</div>`
+      }
+      h += `<div style="text-align:center;margin:4px 0 4px;">${qrSVG}</div>`
     }
 
     // Note
@@ -1134,16 +1138,21 @@ function App() {
 
                 {/* QR CODE */}
                 {settings.showQRCode && settings.qrCodeData && (
-                  <div className="s-barcode" style={{ textAlign: 'center', border: settings.qrCodeBorder ? `${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor}` : 'none', borderRadius: '4px', padding: `${settings.qrCodeFrameWidth}px`, margin: '8px auto', background: settings.qrCodeBgColor, maxWidth: '100%' }}>
-                    <QRCodeSVG
-                      value={settings.qrCodeData}
-                      size={settings.qrCodeSize}
-                      fgColor={settings.qrCodeFgColor}
-                      bgColor={settings.qrCodeBgColor}
-                      level={settings.qrCodeLevel}
-                      includeMargin={true}
-                      style={{ display: 'block', margin: '0 auto', maxWidth: '100%' }}
-                    />
+                  <div style={{ textAlign: 'center' }}>
+                    {settings.qrCodeText && (
+                      <div style={{ fontSize: '0.9em', marginTop: '6px', fontWeight: 'bold' }}>{settings.qrCodeText}</div>
+                    )}
+                    <div className="s-barcode" style={{ border: settings.qrCodeBorder ? `${settings.qrCodeBorderWidth}px solid ${settings.qrCodeBorderColor}` : 'none', borderRadius: '4px', padding: `${settings.qrCodeFrameWidth}px`, margin: '4px auto', background: settings.qrCodeBgColor, display: 'inline-block', maxWidth: '100%' }}>
+                      <QRCodeSVG
+                        value={settings.qrCodeData}
+                        size={settings.qrCodeSize}
+                        fgColor={settings.qrCodeFgColor}
+                        bgColor={settings.qrCodeBgColor}
+                        level={settings.qrCodeLevel}
+                        includeMargin={true}
+                        style={{ display: 'block', margin: '0 auto', maxWidth: '100%' }}
+                      />
+                    </div>
                   </div>
                 )}
 
@@ -1229,6 +1238,11 @@ function App() {
                 </div>
                 {settings.showQRCode && (
                   <>
+                    <div className="fg">
+                      <label>Teks di atas QR Code</label>
+                      <input value={settings.qrCodeText} onChange={e => setSettings({...settings, qrCodeText: e.target.value})} placeholder="Contoh: Scan untuk detail" />
+                      <span className="hint">Teks ini muncul persis di bawah garis pemisah sebelum gambar QR.</span>
+                    </div>
                     <div className="fg">
                       <label>Data QR Code</label>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
