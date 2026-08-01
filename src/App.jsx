@@ -67,6 +67,10 @@ function App() {
     customerAddress: '',
     customerPhone: '',
     note: '',
+    ticketNumber: '',
+    socialMedia: '',
+    wifiPassword: '',
+    loyaltyPoints: '',
     headerLine1: 'Cafe Bee',
     headerLine2: 'Jl. Kemang Selatan I No.20',
     headerLine3: 'Surabaya, 021-33335800',
@@ -286,6 +290,10 @@ function App() {
       customerAddress: '',
       customerPhone: '',
       note: '',
+      ticketNumber: '',
+      socialMedia: '',
+      wifiPassword: '',
+      loyaltyPoints: '',
       headerLine1: 'Cafe Bee',
       headerLine2: 'Jl. Kemang Selatan I No.20',
       headerLine3: 'Surabaya, 021-33335800',
@@ -448,6 +456,17 @@ function App() {
         h += `<span>${item.qty}x ${item.name}</span>`
         h += `<span>${fmt(sub).replace('Rp', '')}</span>`
         h += `</div>`
+      } else if (settings.receiptLayout === 'layout4') {
+        h += `<div style="display:flex;justify-content:space-between;align-items:center;">`
+        h += `<div style="flex:1;"><div style="font-weight:bold;">${item.name}</div><div style="font-size:${fs*0.85}px;color:#555;">${item.qty} x ${fmt(item.price).replace('Rp', '')}</div></div>`
+        h += `<div style="font-weight:bold;font-size:${fs*1.05}px;">${fmt(sub).replace('Rp', '')}</div>`
+        h += `</div>`
+      } else if (settings.receiptLayout === 'layout5') {
+        h += `<div style="display:flex;justify-content:space-between;">`
+        h += `<span style="letter-spacing:1px;font-weight:600;">${item.name}</span>`
+        h += `<span style="font-weight:bold;">${fmt(sub).replace('Rp', '')}</span>`
+        h += `</div>`
+        h += `<div style="font-size:${fs*0.85}px;color:#777;letter-spacing:1px;">${item.qty} x ${fmt(item.price).replace('Rp', '')}</div>`
       } else {
         // Layout 1 (Classic)
         h += `<div>${item.name}</div>`
@@ -480,6 +499,9 @@ function App() {
         h += `<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>Change</span><span>${fmt(change).replace('Rp', '')}</span></div>`
       }
     }
+    if (header.loyaltyPoints) {
+      h += `<div style="display:flex;justify-content:space-between;padding:1px 0;margin-top:2px;border-top:1px solid ${color};"><span>Points</span><span>${header.loyaltyPoints}</span></div>`
+    }
     h += `</div>`
 
     h += `<div style="border-bottom:${settings.borderStyle === 'equals' ? '3px double' : settings.borderStyle === 'stars' ? '2px dotted' : '1px dashed'} ${color};margin:6px 0;"></div>`
@@ -492,14 +514,21 @@ function App() {
       h += `<div style="text-align:center;margin:4px 0 4px;">${qrSVG}</div>`
     }
 
+    // Ticket Number
+    if (header.ticketNumber) {
+      h += `<div style="text-align:center;margin:8px 0;padding:6px;border:2px dashed ${color};border-radius:4px;font-size:${fs*1.6}px;font-weight:bold;letter-spacing:3px;">${header.ticketNumber}</div>`
+    }
+
     // Note
     if (header.note) {
       h += `<div style="text-align:center;font-size:${fs*0.9}px;font-style:italic;color:#555;margin:4px 0;">${header.note.replace(/\n/g, '<br>')}</div>`
     }
 
     // Footer
-    if (header.footer || header.footerLine2 || header.footerLine3) {
+    if (header.socialMedia || header.wifiPassword || header.footer || header.footerLine2 || header.footerLine3) {
       h += `<div style="text-align:center;font-size:${fs*0.95}px;margin-top:6px;line-height:1.5;">`
+      if (header.socialMedia) h += `<div style="font-weight:bold;margin-bottom:2px;">📱 ${header.socialMedia}</div>`
+      if (header.wifiPassword) h += `<div style="margin-bottom:4px;">📶 WiFi: ${header.wifiPassword}</div>`
       if (header.footer) h += `<div>${header.footer}</div>`
       if (header.footerLine2) h += `<div>${header.footerLine2}</div>`
       if (header.footerLine3) h += `<div>${header.footerLine3}</div>`
@@ -623,6 +652,9 @@ function App() {
       totalRow(payLabel, payment)
       if (settings.showChange) totalRow('Change', change)
     }
+    if (header.loyaltyPoints) {
+      totalRow('Points', header.loyaltyPoints)
+    }
 
     p.push(...enc.encode(sep + '\n'))
 
@@ -630,9 +662,23 @@ function App() {
       p.push(...enc.encode('\nQR: ' + settings.qrCodeData + '\n'))
     }
 
-    if (header.footer) {
+    if (header.ticketNumber) {
       p.push(0x1B, 0x61, 0x01) // Center align
-      p.push(...enc.encode('\n' + header.footer + '\n\n'))
+      p.push(...enc.encode('\n--- TICKET ---\n'))
+      p.push(0x1D, 0x21, 0x11) // Double size
+      p.push(...enc.encode(header.ticketNumber + '\n'))
+      p.push(0x1D, 0x21, 0x00) // Normal size
+    }
+
+    if (header.socialMedia || header.wifiPassword || header.footer || header.footerLine2 || header.footerLine3) {
+      p.push(0x1B, 0x61, 0x01) // Center align
+      p.push(...enc.encode('\n'))
+      if (header.socialMedia) p.push(...enc.encode('Social: ' + header.socialMedia + '\n'))
+      if (header.wifiPassword) p.push(...enc.encode('WiFi: ' + header.wifiPassword + '\n'))
+      if (header.footer) p.push(...enc.encode(header.footer + '\n'))
+      if (header.footerLine2) p.push(...enc.encode(header.footerLine2 + '\n'))
+      if (header.footerLine3) p.push(...enc.encode(header.footerLine3 + '\n'))
+      p.push(...enc.encode('\n'))
     }
 
     if (settings.showThankYou) {
@@ -829,6 +875,36 @@ function App() {
                 <div className="fg full"><label>Alamat Pelanggan</label><textarea rows="2" value={header.customerAddress} onChange={e => setHeader({...header, customerAddress: e.target.value})} placeholder="Alamat pelanggan (opsional)" /></div>
                 <div className="fg"><label>No. HP Pelanggan</label><input value={header.customerPhone} onChange={e => setHeader({...header, customerPhone: e.target.value})} placeholder="No. HP pelanggan" /></div>
                 <div className="fg full"><label>Catatan / Note (tampil di struk)</label><textarea rows="2" value={header.note} onChange={e => setHeader({...header, note: e.target.value})} placeholder="Catatan tambahan (opsional)" /></div>
+              </div>
+            </section>
+
+            {/* INFORMASI TAMBAHAN */}
+            <section className="card">
+              <div className="card-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><h3>Informasi Tambahan (Opsional)</h3></div>
+              <div className="grid-2">
+                <div className="fg">
+                  <label>Nomor Tiket / Antrean</label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input value={header.ticketNumber} onChange={e => setHeader({...header, ticketNumber: e.target.value})} placeholder="Contoh: A-012" style={{ flex: 1 }} />
+                    <button className="btn-sec" onClick={() => setHeader({...header, ticketNumber: Math.random().toString(36).substring(2, 6).toUpperCase()})} title="Acak Nomor Tiket">🎲 Acak</button>
+                  </div>
+                  <span className="hint">Tampil besar di bawah Barcode/QR</span>
+                </div>
+                <div className="fg">
+                  <label>Poin Loyalitas (Loyalty)</label>
+                  <input value={header.loyaltyPoints} onChange={e => setHeader({...header, loyaltyPoints: e.target.value})} placeholder="Contoh: +10 Pts" />
+                  <span className="hint">Tampil di bawah total harga</span>
+                </div>
+                <div className="fg">
+                  <label>Sosial Media</label>
+                  <input value={header.socialMedia} onChange={e => setHeader({...header, socialMedia: e.target.value})} placeholder="Contoh: IG: @tokosaya" />
+                  <span className="hint">Tampil di bagian bawah (footer)</span>
+                </div>
+                <div className="fg">
+                  <label>Password WiFi</label>
+                  <input value={header.wifiPassword} onChange={e => setHeader({...header, wifiPassword: e.target.value})} placeholder="Contoh: gratis123" />
+                  <span className="hint">Tampil di bagian bawah (footer)</span>
+                </div>
               </div>
             </section>
 
@@ -1103,6 +1179,22 @@ function App() {
                           <span>{item.qty}x {item.name}</span>
                           <span>{fmt(item.qty * item.price).replace('Rp', '')}</span>
                         </div>
+                      ) : settings.receiptLayout === 'layout4' ? (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 'bold' }}>{item.name}</div>
+                            <div style={{ fontSize: '0.85em', color: '#555' }}>{item.qty} x {fmt(item.price).replace('Rp', '')}</div>
+                          </div>
+                          <div style={{ fontWeight: 'bold', fontSize: '1.05em' }}>{fmt(item.qty * item.price).replace('Rp', '')}</div>
+                        </div>
+                      ) : settings.receiptLayout === 'layout5' ? (
+                        <>
+                          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span style={{ letterSpacing: '1px', fontWeight: '600' }}>{item.name}</span>
+                            <span style={{ fontWeight: 'bold' }}>{fmt(item.qty * item.price).replace('Rp', '')}</span>
+                          </div>
+                          <div style={{ fontSize: '0.85em', color: '#777', letterSpacing: '1px' }}>{item.qty} x {fmt(item.price).replace('Rp', '')}</div>
+                        </>
                       ) : (
                         <>
                           <div>{item.name}</div>
@@ -1132,6 +1224,7 @@ function App() {
                       {settings.showChange && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0' }}><span>Change</span><span>{fmt(change).replace('Rp', '')}</span></div>}
                     </>
                   )}
+                  {header.loyaltyPoints && <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1px 0', marginTop: '2px', borderTop: '1px solid currentColor' }}><span>Points</span><span>{header.loyaltyPoints}</span></div>}
                 </div>
 
                 <div style={{ borderBottom: settings.borderStyle === 'equals' ? '3px double currentColor' : settings.borderStyle === 'stars' ? '2px dotted currentColor' : '1px dashed currentColor', margin: '6px 0' }}></div>
@@ -1156,6 +1249,13 @@ function App() {
                   </div>
                 )}
 
+                {/* TICKET NUMBER */}
+                {header.ticketNumber && (
+                  <div style={{ textAlign: 'center', margin: '8px 0', padding: '6px', border: '2px dashed currentColor', borderRadius: '4px', fontSize: '1.6em', fontWeight: 'bold', letterSpacing: '3px' }}>
+                    {header.ticketNumber}
+                  </div>
+                )}
+
                 {/* NOTE */}
                 {header.note && (
                   <div style={{ textAlign: 'center', fontSize: '0.85em', fontStyle: 'italic', color: '#555', margin: '4px 0' }}>
@@ -1164,8 +1264,10 @@ function App() {
                 )}
 
                 {/* FOOTER */}
-                {(header.footer || header.footerLine2 || header.footerLine3) && (
+                {(header.socialMedia || header.wifiPassword || header.footer || header.footerLine2 || header.footerLine3) && (
                   <div style={{ textAlign: 'center', fontSize: '0.9em', marginTop: '6px', lineHeight: '1.5' }}>
+                    {header.socialMedia && <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>📱 {header.socialMedia}</div>}
+                    {header.wifiPassword && <div style={{ marginBottom: '4px' }}>📶 WiFi: {header.wifiPassword}</div>}
                     {header.footer && <div>{header.footer}</div>}
                     {header.footerLine2 && <div>{header.footerLine2}</div>}
                     {header.footerLine3 && <div>{header.footerLine3}</div>}
@@ -1217,6 +1319,8 @@ function App() {
                     <option value="layout1">Tipe 1: Standar Klasik (Dua Baris per Item)</option>
                     <option value="layout2">Tipe 2: Modern (Format Tabel Rata Kanan Kiri)</option>
                     <option value="layout3">Tipe 3: Kompak (Satu Baris per Item Lebih Padat)</option>
+                    <option value="layout4">Tipe 4: Modern Digital (Bersih & Rapi)</option>
+                    <option value="layout5">Tipe 5: Premium Minimalist (Butik Mewah)</option>
                   </select>
                   <span className="hint">Pilih layout yang berbeda untuk mengubah cara item dan info ditampilkan.</span>
                 </div>
